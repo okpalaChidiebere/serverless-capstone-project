@@ -1,0 +1,33 @@
+.login-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //max-width: 570px;
+  }
+  
+  .login-container {
+    //float: left;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    background-color: #F7F3E5;
+    border: 2px solid #E8D2B8;
+    //margin-right: 8px;
+    width: 570px;
+    //justify-content: center;
+    //align-items: center;
+  
+    div{
+      display: flex;
+      margin: 7px;
+      //flex-basis: 100px;
+    }
+  }
+  
+  .txtBox {
+    color: #282A2A;
+    background-color: #FFF;
+    padding: 3px;
+    border: 2px solid #CCCCCC;
+    border-radius: 4px;
+  }

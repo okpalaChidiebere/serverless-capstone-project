@@ -1,0 +1,27 @@
+.home-container{
+    display: flex;
+    background-color: white;
+}
+  
+.home-pic{
+    flex-grow: 4;
+    border: 5px solid gray; 
+    width: 810px;
+    background-color:rgb(38, 40, 40);
+    height: 500px;
+    background-image: url("../../icons/photoM.jpg");
+    background-size:100% 100%;  
+}
+  
+.home-nav-buttons {
+    border: 5px solid gray; 
+    flex-grow: 1;
+    flex-wrap: wrap;
+    background-color: rgb(38, 40, 40);
+    width: 272px;
+  
+    button{
+       margin: 2px;
+    }
+}
+  

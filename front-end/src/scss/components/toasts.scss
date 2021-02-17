@@ -1,0 +1,81 @@
+$accent-color:#FF5252;
+
+// flexbox
+@mixin display-flex {
+    @each $prefix in -webkit-, '' {
+      display: #{$prefix}flex;
+    }
+}
+
+@mixin flex($spec...) {
+    @each $prefix in -webkit-, '' {
+      #{$prefix}flex: $spec;
+    }
+}
+
+@mixin min-width-min-content {
+    @each $prefix in -webkit-, -moz-, '' {
+      min-width: #{$prefix}min-content;
+    }
+}
+
+
+.toasts {
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  
+    @media (min-width: 640px) {
+      bottom: 30px;
+      left: 30px;
+      right: auto;
+    }
+  }
+  
+  .toast {
+    color: #fff;
+    background: #323232;
+    padding: 14px 24px;
+    padding-right: 0;
+    opacity: 0;
+    //transform: translateY(-100px);
+    animation: slideDown 3s;
+  
+    @include display-flex;
+  
+    @media (min-width: 640px) {
+      min-width: 288px;
+      max-width: 568px;
+      border-radius: 2px;
+    }
+    
+    & .toast-content {
+      margin-right: 48px;
+      @include flex(1);
+    }
+  
+    & button {
+      margin: 0;
+      margin-right: 24px;
+      color: $accent-color;
+      text-transform: uppercase;
+      @include min-width-min-content;
+  
+      &:focus {
+        outline: none;
+        color: #fff;
+      }
+    }
+  }
+
+  .unbutton {
+    display: inline-block;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    white-space: nowrap;
+  }
