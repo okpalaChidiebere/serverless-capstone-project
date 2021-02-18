@@ -3,7 +3,7 @@ import type { AWS } from '@serverless/typescript';
 import { hello } from './src/functions';
 
 const serverlessConfiguration: AWS = {
-  service: 'back-end',
+  service: 'serverless-invoice-app',
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -11,10 +11,15 @@ const serverlessConfiguration: AWS = {
       includeModules: true
     }
   },
-  plugins: ['serverless-webpack'],
+  plugins: [
+    'serverless-webpack',
+    ],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
+    stage: "${opt:stage, 'dev'}",
+    region: "ca-central-1",
+    apiName: "${self:service}-${self:provider.stage}",
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -24,7 +29,9 @@ const serverlessConfiguration: AWS = {
     },
     lambdaHashingVersion: '20201221',
   },
-  functions: { hello }
+  functions: { 
+    hello
+  }
 }
 
 module.exports = serverlessConfiguration;
