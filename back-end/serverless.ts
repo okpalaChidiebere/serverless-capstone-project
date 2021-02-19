@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import { hello } from './src/functions';
 
+import { requireAuth, login } from './src/functions/auth';
+
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
   frameworkVersion: '2',
@@ -30,7 +32,9 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   functions: { 
-    hello
+    hello,
+    requireAuth,
+    login
   }
 }
 
