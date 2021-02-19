@@ -3,6 +3,7 @@ import type { AWS } from '@serverless/typescript';
 import { hello } from './src/functions';
 
 import { requireAuth, login, refreshToken } from './src/functions/auth';
+import { UsersDynamoDBTable } from './src/resources/dynaoDBTables'
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -28,6 +29,7 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      USERS_TABLE: 'Users-${self:provider.stage}-v0',
     },
     lambdaHashingVersion: '20201221',
   },
@@ -36,6 +38,11 @@ const serverlessConfiguration: AWS = {
     requireAuth,
     login,
     refreshToken,
+  },
+  resources: {
+    Resources: {
+      UsersDynamoDBTable
+    }
   }
 }
 
