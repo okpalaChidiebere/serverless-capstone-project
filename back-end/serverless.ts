@@ -2,7 +2,7 @@ import type { AWS } from '@serverless/typescript';
 
 import { hello } from './src/functions';
 
-import { requireAuth, login } from './src/functions/auth';
+import { requireAuth, login, refreshToken } from './src/functions/auth';
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -34,7 +34,8 @@ const serverlessConfiguration: AWS = {
   functions: { 
     hello,
     requireAuth,
-    login
+    login,
+    refreshToken,
   }
 }
 
