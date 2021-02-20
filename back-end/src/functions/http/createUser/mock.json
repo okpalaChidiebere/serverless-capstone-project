@@ -1,0 +1,6 @@
+{
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"email\": \"okpalacollins4@gmail.com\",\"plainTextPassword\": \"longPassword1\",\"full_name\": \"Okpala Chidiebere\",\"store\": \"52 Oguta Road\"}"
+  }

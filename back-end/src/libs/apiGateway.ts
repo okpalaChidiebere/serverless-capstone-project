@@ -8,9 +8,14 @@ export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayP
 type ValidateAPIGatewayTokenAuthorizerEvent = Omit<APIGatewayTokenAuthorizerEvent, symbol> 
 export type ValidateEventAPIGatewayTokenAuthorizerEven = Handler<ValidateAPIGatewayTokenAuthorizerEvent, CustomAuthorizerResult>
 
-export const formatJSONResponse = (response: Record<string, unknown>) => {
+export const formatJSONResponse = (response: Record<string, unknown>, 
+  statusCode: number, 
+  headers: { [header: string]: string | number | boolean } = { 'Access-Control-Allow-Origin': '*' }
+) => {
   return {
-    statusCode: 200,
-    body: JSON.stringify(response)
+    statusCode,
+    headers,
+    body: JSON.stringify(response),
   }
 }
+

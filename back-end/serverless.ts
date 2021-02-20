@@ -1,8 +1,9 @@
 import type { AWS } from '@serverless/typescript';
 
 import { hello } from './src/functions';
-
 import { requireAuth, login, refreshToken } from './src/functions/auth';
+import { createUser } from './src/functions/http';
+
 import { UsersDynamoDBTable } from './src/resources/dynaoDBTables'
 
 const serverlessConfiguration: AWS = {
@@ -16,6 +17,7 @@ const serverlessConfiguration: AWS = {
   },
   plugins: [
     'serverless-webpack',
+    'serverless-iam-roles-per-function',
     ],
   provider: {
     name: 'aws',
@@ -38,6 +40,7 @@ const serverlessConfiguration: AWS = {
     requireAuth,
     login,
     refreshToken,
+    createUser,
   },
   resources: {
     Resources: {

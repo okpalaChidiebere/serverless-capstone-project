@@ -18,7 +18,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
         return formatJSONResponse({
             auth: false, 
             message: 'Email is malformed' 
-        });
+        }, 400);
     }
 
     //To replaced with a database check later
@@ -26,7 +26,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
         return formatJSONResponse({
             auth: false, 
             message: 'Unauthorized'
-        });
+        }, 400);
     }
 
     // check that user exists

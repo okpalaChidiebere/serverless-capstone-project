@@ -22,7 +22,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
         return formatJSONResponse({
             auth: false, 
             accessToken: ''
-        });
+        }, 400);
     }
 
     //TODO: get sercret key from resource
@@ -33,7 +33,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
         return formatJSONResponse({
             auth: false, 
             accessToken: ''
-        });
+        }, 400);
     }
 
     // check that user exists
@@ -47,7 +47,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
     return formatJSONResponse({
         auth: false, 
         accessToken: jwt
-    });
+    }, 404);
 }
 
 async function verifyToken(refreshToken: string, authSecret: string): Promise<User>{ //returns jwt token
