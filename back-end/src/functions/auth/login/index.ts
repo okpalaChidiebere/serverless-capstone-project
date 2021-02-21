@@ -14,5 +14,14 @@ export default {
         }
       }
     }
+  ],
+  iamRoleStatements: [
+    {
+        Effect: "Allow",
+        Action: [
+            "dynamodb:GetItem",
+        ],
+        Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+    },
   ]
 }

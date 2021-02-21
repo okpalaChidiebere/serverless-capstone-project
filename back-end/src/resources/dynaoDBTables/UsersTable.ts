@@ -3,15 +3,15 @@ export default {
     Properties: {
         AttributeDefinitions: [
             {
-              AttributeName: "userId",
-              AttributeType: "S"
-            },
-            {
-                AttributeName: "createdAt",
+                AttributeName: "email",
                 AttributeType: "S"
             },
             /*
             Maybe be used for index later
+            {
+              AttributeName: "userId",
+              AttributeType: "S"
+            },
             {
                 AttributeName: "store",
                 AttributeType: "S"
@@ -19,12 +19,8 @@ export default {
         ],
         KeySchema: [
             {
-              AttributeName: "userId", //partitionKey
+              AttributeName: "email", //partitionKey
               KeyType: "HASH",
-            },
-            {
-                AttributeName: "createdAt", //sort key
-                KeyType: "RANGE"
             },
         ],
         BillingMode: "PAY_PER_REQUEST",

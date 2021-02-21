@@ -31,7 +31,7 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      USERS_TABLE: 'Users-${self:provider.stage}-v0',
+      USERS_TABLE: 'Users-${self:provider.stage}-v1',
     },
     lambdaHashingVersion: '20201221',
   },

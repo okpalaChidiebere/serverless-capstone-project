@@ -21,6 +21,7 @@ export default {
             Effect: "Allow",
             Action: [
                 "dynamodb:PutItem",
+                "dynamodb:GetItem",
             ],
             Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
         },

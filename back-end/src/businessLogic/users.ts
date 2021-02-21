@@ -28,3 +28,7 @@ export async function createUser({ email, full_name, plainTextPassword, store })
         tokenVersion: 0
     })
 }
+
+export async function findUser (email: string){
+    return await userAccess.findUser(email)
+}

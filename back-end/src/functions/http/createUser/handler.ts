@@ -6,7 +6,7 @@ import { middyfy } from '@libs/lambda';
 import { createLogger } from '@libs/logger';
 import { createAccessToken, createRefreshToken } from '@libs/jsonWebToken';
 
-import { createUser } from '../../../businessLogic/users';
+import { createUser, findUser } from '../../../businessLogic/users';
 import schema from './schema';
 
 const logger = createLogger('createTodos');
@@ -14,6 +14,13 @@ const logger = createLogger('createTodos');
 const hello: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
     logger.info('Processing event: ', { event });
+
+    const checkUser = await findUser(event.body.email)
+
+    if(checkUser) {
+        //early return
+        return formatJSONResponse({ auth: false, message: 'User may already exist' }, 401);
+    }
 
     const user = await createUser({ ...event.body })
 
