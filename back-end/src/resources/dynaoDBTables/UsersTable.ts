@@ -6,12 +6,12 @@ export default {
                 AttributeName: "email",
                 AttributeType: "S"
             },
+            {
+                AttributeName: "userId",
+                AttributeType: "S"
+            },
             /*
             Maybe be used for index later
-            {
-              AttributeName: "userId",
-              AttributeType: "S"
-            },
             {
                 AttributeName: "store",
                 AttributeType: "S"
@@ -19,9 +19,23 @@ export default {
         ],
         KeySchema: [
             {
-              AttributeName: "email", //partitionKey
+              AttributeName: "userId", //partitionKey
               KeyType: "HASH",
             },
+        ],
+        GlobalSecondaryIndexes: [
+            {
+                IndexName: "${self:provider.environment.USERS_ID_INDEX}",
+                KeySchema: [
+                    {
+                        AttributeName: "email",
+                        KeyType: "HASH"
+                    }
+                ],
+                Projection: {
+                    ProjectionType: "ALL"
+                }
+            }
         ],
         BillingMode: "PAY_PER_REQUEST",
         TableName: "${self:provider.environment.USERS_TABLE}"

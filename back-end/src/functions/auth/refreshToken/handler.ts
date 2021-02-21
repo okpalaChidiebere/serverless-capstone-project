@@ -8,7 +8,7 @@ import { middyfy } from '@libs/lambda';
 import { createLogger } from '@libs/logger';
 import { createAccessToken } from '@libs/jsonWebToken';
 
-
+import { findUserByID } from '../../../businessLogic/users';
 
 const logger = createLogger('refreshToken');
 
@@ -33,21 +33,39 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
         return formatJSONResponse({
             auth: false, 
             accessToken: ''
-        }, 400);
+        }, 401);
     }
 
     // check that user exists
+    const user = await findUserByID(decodedToken.userId)
 
     //return not found response if we dont find the user
+    if(!user){
+        return formatJSONResponse({
+            auth: false, 
+            accessToken: ''
+        }, 401);
+    }
+
+    /*We make an early return 
+    The token version in the palyload could be 0, while we just increated it to 1 in the db due to 
+    calling the revoke method maybe by changing password or mannually updated the versin when we detect
+     a hack in the account*/
+    if(user.tokenVersion !== decodedToken.tokenVersion){
+        return formatJSONResponse({
+            auth: false, 
+            accessToken: ''
+        }, 401);
+    }
 
 
     //Generate Access Token
-    const jwt = createAccessToken({ userId: decodedToken.userId});
+    const jwt = createAccessToken({ userId: decodedToken.userId, tokenVersion: user.tokenVersion});
 
     return formatJSONResponse({
-        auth: false, 
+        auth: true, 
         accessToken: jwt
-    }, 404);
+    }, 200);
 }
 
 async function verifyToken(refreshToken: string, authSecret: string): Promise<User>{ //returns jwt token

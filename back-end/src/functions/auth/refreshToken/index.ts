@@ -7,5 +7,14 @@ export default {
         path: 'refresh_token',
       }
     }
+  ],
+  iamRoleStatements: [
+    {
+        Effect: "Allow",
+        Action: [
+            "dynamodb:GetItem",
+        ],
+        Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+    },
   ]
 }

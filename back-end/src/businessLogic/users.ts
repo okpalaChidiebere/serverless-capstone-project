@@ -29,6 +29,14 @@ export async function createUser({ email, full_name, plainTextPassword, store })
     })
 }
 
-export async function findUser (email: string){
-    return await userAccess.findUser(email)
+export async function queryUserByEmail (email: string){
+    return await userAccess.queryUserByEmail(email)
+}
+
+export async function findUserByID (id: string){
+    return await userAccess.findUserByID(id)
+}
+
+export async function revokeRefreshTokenForUser(id: string){
+    return await userAccess.revokeRefreshTokenForUser(id)
 }

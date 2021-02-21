@@ -19,9 +19,9 @@ export default {
     {
         Effect: "Allow",
         Action: [
-            "dynamodb:GetItem",
+            "dynamodb:Query",
         ],
-        Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+        Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}/index/${self:provider.environment.USERS_ID_INDEX}"
     },
   ]
 }
