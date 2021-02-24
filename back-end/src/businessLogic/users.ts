@@ -24,7 +24,7 @@ export async function createUser({ email, full_name, plainTextPassword, store })
         store,
         createdAt: date,
         updatedAt: date,
-        salesMade: [],
+        //salesMade: new Set(),
         tokenVersion: 0
     })
 }

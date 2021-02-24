@@ -1,12 +1,10 @@
-//import type { FromSchema } from "json-schema-to-ts";
-
 export default {
     type: "object",
     properties: {
-        email: { type: 'string' },
-        full_name: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+        full_name: { type: 'string', minLength: 3, },
         store: { type: 'string' },
-        plainTextPassword: { type: 'string' },
+        plainTextPassword: { type: 'string',  minLength: 6, },
     },
     required: ['email', 'full_name', 'store', 'plainTextPassword']
 } as const;

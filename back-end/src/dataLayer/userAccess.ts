@@ -10,7 +10,7 @@ const logger = createLogger('userDataAccess');
 export class UserAccess {
 
     constructor(
-        private readonly docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' }), 
+        private readonly docClient = new AWS.DynamoDB.DocumentClient(), 
         private pid = uuid.v4(),
         private readonly usersTable = process.env.USERS_TABLE,
         private readonly userTableUserIDIndex = process.env.USERS_ID_INDEX,
@@ -95,15 +95,15 @@ export class UserAccess {
     All previous version of refreshToken will not longer be valid and all previous 
     version of AccessToken that exists before we change the token version only have 
     a limited amount of time to be user. Like in our APP 15minutes */
-    async revokeRefreshTokenForUser(userID: string) {
+    async revokeRefreshTokenForUser(userId: string) {
         logger.info(`Revoking RefreshToken`, {
             pid: this.pid,
-            userID
+            userId
         });
 
         const params = {
             TableName: this.usersTable,
-            Key: { userID }, //HASHKEY
+            Key: { userId }, //HASHKEY
             UpdateExpression: "ADD tokenVersion :x",
             ExpressionAttributeValues: { ":x": 1 },
             ReturnValues: "UPDATED_NEW",

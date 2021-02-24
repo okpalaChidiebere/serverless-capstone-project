@@ -7,5 +7,6 @@ export interface User {
     createdAt?: string
     updatedAt?: string,
     tokenVersion?: number
-    salesMade?: string[]
+    //salesMade?: string[]
+    salesMade?: Set<string>
 }
