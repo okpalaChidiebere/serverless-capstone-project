@@ -3,8 +3,10 @@ import type { AWS } from '@serverless/typescript';
 import { hello } from './src/functions';
 import { requireAuth, login, refreshToken } from './src/functions/auth';
 import { createUser, addInvoice } from './src/functions/http';
+import { ConnectHandler, DisconnectHandler } from './src/functions/websocket'; //functions that listen for websocekt connections to our app
 
-import { UsersDynamoDBTable, InvoiceDynamoDBTable } from './src/resources/dynaoDBTables';
+import { UsersDynamoDBTable, InvoiceDynamoDBTable, 
+  WebSocketConnectionsDynamoDBTable } from './src/resources/dynaoDBTables';
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -34,6 +36,7 @@ const serverlessConfiguration: AWS = {
       USERS_TABLE: 'Users-${self:provider.stage}-v0',
       USERS_ID_INDEX: 'UsersIdIndex-${self:provider.stage}',
       INVOICE_TABLE: 'Invoice-${self:provider.stage}-v1',
+      WEB_SOCKET_CONNECTIONS_TABLE: "Web-Socket-Connections-${self:provider.stage}", //This table keeps a list of connections for our webScoket API. This way we can easily send notifications to our connections
     },
     lambdaHashingVersion: '20201221',
   },
@@ -44,11 +47,14 @@ const serverlessConfiguration: AWS = {
     refreshToken,
     createUser,
     addInvoice,
+    ConnectHandler, 
+    DisconnectHandler,
   },
   resources: {
     Resources: {
       UsersDynamoDBTable,
       InvoiceDynamoDBTable,
+      WebSocketConnectionsDynamoDBTable,
     }
   }
 }
