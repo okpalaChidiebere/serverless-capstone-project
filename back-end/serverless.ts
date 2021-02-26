@@ -4,9 +4,10 @@ import { hello } from './src/functions';
 import { requireAuth, login, refreshToken } from './src/functions/auth';
 import { createUser, addInvoice } from './src/functions/http';
 import { ConnectHandler, DisconnectHandler } from './src/functions/websocket'; //functions that listen for websocekt connections to our app
+import { sendInvoiceNotifications } from './src/functions/dynamoDb';
 
 import { UsersDynamoDBTable, InvoiceDynamoDBTable, 
-  WebSocketConnectionsDynamoDBTable } from './src/resources/dynaoDBTables';
+  WebSocketConnectionsDynamoDBTable } from './src/resources';
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -49,6 +50,7 @@ const serverlessConfiguration: AWS = {
     addInvoice,
     ConnectHandler, 
     DisconnectHandler,
+    sendInvoiceNotifications,
   },
   resources: {
     Resources: {

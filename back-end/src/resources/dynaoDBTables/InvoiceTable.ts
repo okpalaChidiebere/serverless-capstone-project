@@ -22,6 +22,9 @@ export default {
             },
         ],
         BillingMode: "PAY_PER_REQUEST",
+        StreamSpecification: {
+            StreamViewType: "NEW_IMAGE",
+        },
         TableName: "${self:provider.environment.INVOICE_TABLE}"
     }    
 }
