@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import * as createError from 'http-errors';
 import * as jwt from 'jsonwebtoken'
 import { User } from '../../../models/User'
 
@@ -19,10 +20,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
     const cookie = event.headers['Cookie']
 
     if(!cookie) {
-        return formatJSONResponse({
-            auth: false, 
-            accessToken: ''
-        }, 400);
+        throw new createError.Unauthorized(`accessToken: ''`);
     }
 
     //TODO: get sercret key from resource
@@ -30,10 +28,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
     try{
         decodedToken = await verifyToken(cookie.split('=')[1], 'tempSecretSeparateFromAccess');
     }catch(e){
-        return formatJSONResponse({
-            auth: false, 
-            accessToken: ''
-        }, 401);
+        throw new createError.Unauthorized(`accessToken: ''`);
     }
 
     // check that user exists
@@ -41,10 +36,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
 
     //return not found response if we dont find the user
     if(!user){
-        return formatJSONResponse({
-            auth: false, 
-            accessToken: ''
-        }, 401);
+        throw new createError.Unauthorized(`accessToken: ''`);
     }
 
     /*We make an early return 
@@ -52,10 +44,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
     calling the revoke method maybe by changing password or mannually updated the versin when we detect
      a hack in the account*/
     if(user.tokenVersion !== decodedToken.tokenVersion){
-        return formatJSONResponse({
-            auth: false, 
-            accessToken: ''
-        }, 401);
+        throw new createError.Unauthorized(`accessToken: ''`);
     }
 
 

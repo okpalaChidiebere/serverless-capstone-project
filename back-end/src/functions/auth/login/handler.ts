@@ -1,5 +1,5 @@
 import 'source-map-support/register';
-
+import * as createError from 'http-errors';
 import * as EmailValidator from 'email-validator';
 
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
@@ -16,10 +16,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
     const { email, password } = event.body;
 
     if (!EmailValidator.validate(email)) {
-        return formatJSONResponse({
-            auth: false, 
-            message: 'Email is malformed' 
-        }, 400);
+        throw new createError.BadRequest(`Email is malformed`);
     }
 
     // check that user exists
@@ -27,7 +24,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
 
     if(user.length === 0) {
         //early return
-        return formatJSONResponse({ auth: false, message: 'Unauthorized' }, 401);
+        throw new createError.Unauthorized(`User may not exist`);
     }
 
     // check that the password matches. We will use brcypt for this
@@ -35,7 +32,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
 
     if(!authValid) {
         //early return
-        return formatJSONResponse({ auth: false, message: 'Unauthorized' }, 401);
+        throw new createError.Unauthorized(`InCorrectPassword`);
     }
 
     //Generate Access Token

@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import * as createError from 'http-errors';
 
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
@@ -27,10 +28,7 @@ const getUsers: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => {
             err
         });
 
-        return formatJSONResponse({
-            message: 'Problem getting users',
-            error: err
-        }, 400);
+        throw createError(400, `Problem getting users`);
     }
     
 }

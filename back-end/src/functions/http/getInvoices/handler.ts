@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import * as createError from 'http-errors';
 
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
@@ -25,12 +26,21 @@ const getInvoices: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => {
         logger.info(`Problem getting Invoice Records`, {
             err
         });
-        return formatJSONResponse({
-            message: 'Problem getting Invoice Records',
-            error: err
-        }, 400);
+        
+        throw createError(400, `Problem getting Invoice Records`);
     }
     
 }
 
 export const main = middyfy(getInvoices);
+
+
+/*
+status: number;
+        statusCode: number;
+        expose: boolean;
+        headers?: {
+            [key: string]: string;
+        };
+        [key: string]: any;
+*/

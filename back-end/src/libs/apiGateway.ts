@@ -10,7 +10,7 @@ export type ValidateEventAPIGatewayTokenAuthorizerEven = Handler<ValidateAPIGate
 
 export const formatJSONResponse = (response: Record<string, unknown>, 
   statusCode: number, 
-  headers: { [header: string]: string | number | boolean } = { 'Access-Control-Allow-Origin': '*' }
+  headers: {  } = {  }
 ) => {
   return {
     statusCode,
@@ -18,4 +18,4 @@ export const formatJSONResponse = (response: Record<string, unknown>,
     body: JSON.stringify(response),
   }
 }
-
+//headers: { [header: string]: string | number | boolean } = { 'Access-Control-Allow-Origin': '*' }

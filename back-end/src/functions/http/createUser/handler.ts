@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import * as createError from 'http-errors';
 
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
@@ -19,7 +20,8 @@ const hello: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
 
     if(checkUser.length > 0) {
         //early return
-        return formatJSONResponse({ auth: false, message: 'User may already exist' }, 401);
+        throw new createError.Forbidden('User may already exist');
+        //return formatJSONResponse({ auth: false, message: 'User may already exist' }, 401);
     }
 
     const user = await createUser({ ...event.body })

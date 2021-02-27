@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import * as createError from 'http-errors';
 
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
@@ -21,12 +22,7 @@ const addInvoiceHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
             result,
         }, 200);
     }catch(err){
-
-        return formatJSONResponse({
-            message: 'Problem inserting Item',
-            error: err || result,
-            
-        }, 400);
+        throw new createError.BadRequest('Problem inserting Item');
     }
 }
 
