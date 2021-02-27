@@ -2,7 +2,7 @@ import type { AWS } from '@serverless/typescript';
 
 import { hello } from './src/functions';
 import { requireAuth, login, refreshToken } from './src/functions/auth';
-import { createUser, addInvoice, GetUsers } from './src/functions/http';
+import { createUser, addInvoice, GetUsers, GetInvoices } from './src/functions/http';
 import { ConnectHandler, DisconnectHandler } from './src/functions/websocket'; //functions that listen for websocekt connections to our app
 import { sendInvoiceNotifications } from './src/functions/dynamoDb';
 
@@ -52,6 +52,7 @@ const serverlessConfiguration: AWS = {
     DisconnectHandler,
     sendInvoiceNotifications,
     GetUsers,
+    GetInvoices,
   },
   resources: {
     Resources: {

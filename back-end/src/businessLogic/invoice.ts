@@ -27,3 +27,7 @@ export async function addInvoice({ id, orders, soldTo, billTo, paymentStatus,
     }, userId)
 }
 
+export async function getAllInvoiceRecords(){
+    return await invoiceAccess.getAllInvoiceRecords();
+}
+

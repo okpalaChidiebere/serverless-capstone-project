@@ -51,5 +51,33 @@ export class InvoiceAccess {
             return err
         }
     }
+
+    async getAllInvoiceRecords(): Promise<Invoice[]>{
+        logger.info(`getting all Invoice records`, {
+            pid: this.pid,
+        });
+
+        const result = await this.docClient.scan({
+            TableName: this.invoiceTable,
+            ProjectionExpression: "#id, #orders, #soldTo, #billTo, #paymentStatus, #paymentType, #date, #total, #amountPaid, #salesPerson",
+            ExpressionAttributeNames: {
+                "#id":"id",
+                "#orders":"orders",
+                "#soldTo":"soldTo",
+                "#billTo":"billTo",
+                "#paymentStatus":"paymentStatus",
+                "#paymentType":"paymentType",
+                "#date":"date",
+                "#total":"total",
+                "#amountPaid":"amountPaid",
+                "#salesPerson":"salesPerson",
+            }
+        }).promise();
+
+        logger.info(`Successfully getting all users`, {
+            result
+        });
+        return result.Items as Invoice[];
+    }
     
 }
