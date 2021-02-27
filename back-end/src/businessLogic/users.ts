@@ -40,3 +40,7 @@ export async function findUserByID (id: string){
 export async function revokeRefreshTokenForUser(id: string){
     return await userAccess.revokeRefreshTokenForUser(id)
 }
+
+export async function getAllUsers(){
+    return await userAccess.getAllUsers();
+}

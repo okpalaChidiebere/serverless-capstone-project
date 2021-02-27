@@ -114,4 +114,27 @@ export class UserAccess {
         logger.info(`Update statement has completed without error`, { result: result });
 
     }
+
+    async getAllUsers(): Promise<User[]>{
+        logger.info(`getting all users`, {
+            pid: this.pid,
+        });
+
+        const result = await this.docClient.scan({
+            TableName: this.usersTable,
+            ProjectionExpression: "#email, #salesMade, #full_name, #userId, #store",
+            ExpressionAttributeNames: {
+                "#email":"email",
+                "#salesMade":"salesMade",
+                "#store":"store",
+                "#userId":"userId",
+                "#full_name":"full_name",
+            }
+        }).promise();
+
+        logger.info(`getting all users`, {
+            message: 'Successfully getting all users'
+        });
+        return result.Items as User[];
+    }
 }
