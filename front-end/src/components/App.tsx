@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
-import { Router, Route, Switch } from 'react-router-dom'
-import createHistory from 'history/createBrowserHistory'
+import { Router, Route, Switch, useHistory } from 'react-router-dom'
+//import createHistory from 'history/createBrowserHistory'
 import Header from './Header'
 import Home from './Home'
 import NotFoundPage from './NotFoundPage'
@@ -8,13 +8,23 @@ import AddInvoice from './AddInvoice'
 import TransactionReports from './TransactionReports'
 import LoginPage from './LoginPage'
 
-const history = createHistory()
+
 
 
 function App() {
-
+  const history = useHistory()
   return (
-    <Router history={history}>
+    <div className="site-container">
+      <LoginPage />
+    </div>
+  )
+}
+
+export default App;
+
+
+/**
+<Router history={history}>
       <Fragment>
         <div className="site-container">
           <Header />
@@ -41,7 +51,4 @@ function App() {
         </div>
       </Fragment>
     </Router>
-  )
-}
-
-export default App;
+ */

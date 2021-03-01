@@ -56,6 +56,22 @@ const serverlessConfiguration: AWS = {
   },
   resources: {
     Resources: {
+      GatewayResponseDefault4XX: {
+        //APIGateway::GatewayResponse type sets correct CORS headers if our custom authorizer fails and denies access to any function
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters:{
+            "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+            "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+            "gatewayresponse.header.Access-Control-Allow-Methods": "'GET,OPTIONS,POST'" //list all the http method that will need authentication in your app. The help witl preFlight request like for forms
+          },
+          ResponseType: "DEFAULT_4XX",
+          RestApiId: {
+            Ref: "ApiGatewayRestApi"
+          }
+          
+        }
+      },
       UsersDynamoDBTable,
       InvoiceDynamoDBTable,
       WebSocketConnectionsDynamoDBTable,

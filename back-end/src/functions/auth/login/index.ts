@@ -7,6 +7,7 @@ export default {
       http: {
         method: 'post',
         path: 'login',
+        cors: true, //set cors to allow prefilghts(OPTIONS method) request when submitting a form
         request: {
           schema: {
             'application/json': schema

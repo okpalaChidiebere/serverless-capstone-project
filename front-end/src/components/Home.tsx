@@ -1,14 +1,14 @@
 import React, { Fragment, useState } from 'react'
 import CashManagement from './modal/CashManagement'
 import Toast from './Toast'
-import { History } from 'history'
+import { RouteComponentProps } from 'react-router-dom'
 
 
-interface HomeProps{
+/*interface HomeProps{
   history: History, 
-}
+}*/
 
-const Home: React.FC<HomeProps> = (props) =>  {
+const Home: React.FC<RouteComponentProps> = (props) =>  {
 
   const toast = new Toast()
   const [ viewModal, openModal ] = useState({
