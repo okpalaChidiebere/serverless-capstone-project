@@ -1,9 +1,21 @@
 import React from 'react'
 import serializeForm from 'form-serialize'
 import { loginUser } from '../api/users-api'
+import jwtDecode, { JwtPayload } from "jwt-decode"
+import { connect, ConnectedProps } from 'react-redux'
+import { setAuthedUser } from '../actions/authedUser'
+import { RootState } from '../reducers'
 
 
-const LoginPage: React.FC = () => {
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  //Where i can add other props its needs other than store and dispatch from redux
+}
+
+const LoginPage: React.FC<Props> = (props) => {
+
+    const { setAuthedUser, authedUser } = props
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -15,6 +27,20 @@ const LoginPage: React.FC = () => {
         try{
             const response = await loginUser({ email, password })
             console.log(response)
+
+            const { token, user } = response
+            const { exp = 0 } = jwtDecode(token) as JwtPayload
+
+            let expiresAt = (exp * 1000) + new Date().getTime()
+
+            console.log(expiresAt)
+
+            setAuthedUser({
+                accessToken: token,
+                user,
+                isLoggedIn: new Date().getTime() < expiresAt,
+                expiresAt: exp * 1000
+            })
         }catch(err){
             alert(err);
         }
@@ -40,4 +66,15 @@ const LoginPage: React.FC = () => {
     )
 }
 
-export default LoginPage
+
+const mapStateToProps = ({ authedUser }: RootState) => ({
+    authedUser
+})
+  
+const mapDispatchToProps = {
+    setAuthedUser
+}
+  
+const connector = connect(mapStateToProps , mapDispatchToProps)
+  
+export default connector(LoginPage)
