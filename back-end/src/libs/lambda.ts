@@ -8,7 +8,6 @@ export const middyfy = (handler) => {
   .use(middyJsonBodyParser())
   .use(httpErrorHandler())
   .use(cors({
-    //headers: 'Access-Control-Allow-Credentials: true',
     credentials: true
   }))
 }

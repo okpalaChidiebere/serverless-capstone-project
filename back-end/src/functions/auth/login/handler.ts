@@ -57,9 +57,7 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
     }, 
     200,
     {
-        "Access-Control-Allow-Credentials": true,
-        "Access-Control-Allow-Origin": "http://localhost:3000",
-        "Set-Cookie": `jid=${jwtCookie}; HttpOnly`
+        "Set-Cookie": `jid=${jwtCookie}; HttpOnly; path=/dev/refresh_token; sameSite=None; Secure`
     })
 }
 
