@@ -5,6 +5,7 @@ import jwtDecode, { JwtPayload } from "jwt-decode"
 import { connect, ConnectedProps } from 'react-redux'
 import { setAuthedUser } from '../actions/authedUser'
 import { RootState } from '../reducers'
+import { useHistory } from 'react-router-dom'
 
 
 type PropsFromRedux = ConnectedProps<typeof connector>
@@ -16,6 +17,7 @@ type Props = PropsFromRedux & {
 const LoginPage: React.FC<Props> = (props) => {
 
     const { setAuthedUser, authedUser } = props
+    const history = useHistory();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -41,6 +43,10 @@ const LoginPage: React.FC<Props> = (props) => {
                 isLoggedIn: new Date().getTime() < expiresAt,
                 expiresAt: exp * 1000
             })
+            //const directTo = location.state as { redirectTo: string} 
+            //console.log(directTo)
+            //history.replace(directTo.redirectTo)
+            //history.goBack()
         }catch(err){
             alert(err);
         }
