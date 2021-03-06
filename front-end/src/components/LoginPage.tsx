@@ -1,11 +1,12 @@
 import React from 'react'
 import serializeForm from 'form-serialize'
 import { loginUser } from '../api/users-api'
-import jwtDecode, { JwtPayload } from "jwt-decode"
 import { connect, ConnectedProps } from 'react-redux'
 import { setAuthedUser } from '../actions/authedUser'
 import { RootState } from '../reducers'
-import { useHistory } from 'react-router-dom'
+//import { useHistory } from 'react-router-dom'
+import { setRrefreshToken } from "../utils/tokens"
+import { getExpiryTime } from "../utils/jsonWebToken"
 
 
 type PropsFromRedux = ConnectedProps<typeof connector>
@@ -16,8 +17,8 @@ type Props = PropsFromRedux & {
 
 const LoginPage: React.FC<Props> = (props) => {
 
-    const { setAuthedUser, authedUser } = props
-    const history = useHistory();
+    const { setAuthedUser } = props
+    //const history = useHistory();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -30,19 +31,19 @@ const LoginPage: React.FC<Props> = (props) => {
             const response = await loginUser({ email, password })
             console.log(response)
 
-            const { token, user } = response
-            const { exp = 0 } = jwtDecode(token) as JwtPayload
+            const { access_token, user, refresh_token } = response
+            const exp = getExpiryTime(access_token)
 
             let expiresAt = (exp * 1000) + new Date().getTime()
 
-            console.log(expiresAt)
-
             setAuthedUser({
-                accessToken: token,
+                accessToken: access_token,
                 user,
                 isLoggedIn: new Date().getTime() < expiresAt,
-                expiresAt: exp * 1000
+                expiresAt
             })
+
+            setRrefreshToken(refresh_token)
             //const directTo = location.state as { redirectTo: string} 
             //console.log(directTo)
             //history.replace(directTo.redirectTo)
@@ -72,9 +73,9 @@ const LoginPage: React.FC<Props> = (props) => {
     )
 }
 
-
-const mapStateToProps = ({ authedUser }: RootState) => ({
-    authedUser
+//I really did not use this slice of store
+const mapStateToProps = ({  }: RootState) => ({
+    //authedUser
 })
   
 const mapDispatchToProps = {

@@ -5,6 +5,7 @@ export default {
       http: {
         method: 'post',
         path: 'refresh_token',
+        cors: true
       }
     }
   ],

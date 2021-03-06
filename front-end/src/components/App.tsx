@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react'
+import React, { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { RootState } from '../reducers'
 import { connect, ConnectedProps } from 'react-redux'
@@ -7,14 +7,27 @@ import Home from './Home'
 import TransactionReports from './TransactionReports'
 import LoginPage from './LoginPage'
 import AddInvoice from './AddInvoice'
+import { renewSession } from '../actions/authedUser'
 
 
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
-function App({ authedUser } : Props) {
+function App({ authedUser, renewSession } : Props) {
   
   const isAuthenticated = authedUser.isLoggedIn
+
+
+  useEffect(() => {
+    (async () => {
+      try{
+        renewSession()
+      }catch(err){
+        alert(err);
+      }
+    })()
+  }, [ renewSession ]);
+  //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
 
   return (
     <div className="site-container">
@@ -30,8 +43,7 @@ function App({ authedUser } : Props) {
               exact
               render={props => {
                 return <Home {...props}/>
-              }}
-              component={Home} />
+              }}/>
               <Route 
               path='/transactionReports' 
               exact 
@@ -50,7 +62,11 @@ function App({ authedUser } : Props) {
 }
 
 const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
+
+const mapDispatchToProps = {
+  renewSession
+}
   
-const connectedApp = connect(mapStateToProps)
+const connectedApp = connect(mapStateToProps, mapDispatchToProps)
 
 export default connectedApp(App)

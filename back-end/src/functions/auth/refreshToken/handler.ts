@@ -10,23 +10,26 @@ import { createLogger } from '@libs/logger';
 import { createAccessToken } from '@libs/jsonWebToken';
 
 import { findUserByID } from '../../../businessLogic/users';
+import schema from './schema';
 
 const logger = createLogger('refreshToken');
 
-const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => {
+const refreshToken: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
-    logger.info('refreshToken', event.headers['Cookie']);
+    const { refresh_token } = event.body;
 
-    const cookie = event.headers['Cookie']
+    logger.info('refreshToken', event);
+
+    /*const cookie = event.headers['Cookie']
 
     if(!cookie) {
         throw new createError.Unauthorized(`accessToken: ''`);
-    }
+    }*/
 
     //TODO: get sercret key from resource
     let decodedToken: any;
     try{
-        decodedToken = await verifyToken(cookie.split('=')[1], 'tempSecretSeparateFromAccess');
+        decodedToken = await verifyToken(refresh_token, 'tempSecretSeparateFromAccess');
     }catch(e){
         throw new createError.Unauthorized(`accessToken: ''`);
     }
@@ -53,7 +56,11 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<null> = async (event) => 
 
     return formatJSONResponse({
         auth: true, 
-        accessToken: jwt
+        accessToken: jwt,
+        user: {
+            full_name: user.full_name,
+            store: user.store
+        }
     }, 200);
 }
 

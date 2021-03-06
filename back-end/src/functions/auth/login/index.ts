@@ -8,7 +8,7 @@ export default {
         method: 'post',
         path: 'login',
         //cors: true, //set cors to allow prefilghts(OPTIONS method) request when submitting a form
-        cors: {
+        cors: true,/*{
           origin: 'http://localhost:3000',
           headers: [
             'Content-Type', 'X-Amz-Date', 'Authorization', 'X-Api-Key', 'X-Amz-Security-Token', 'X-Amz-User-Agent', 
@@ -16,7 +16,7 @@ export default {
           ],
           allowCredentials: true,
           cacheControl: 'max-age=600, s-maxage=600, proxy-revalidate'
-        },
+        },*/
         request: {
           schema: {
             'application/json': schema

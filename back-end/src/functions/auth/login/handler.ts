@@ -46,7 +46,8 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
 
     return formatJSONResponse({
         body: {
-            token: jwt,
+            access_token: jwt,
+            refresh_token: jwtCookie,
             user: {
                 full_name: user[0].full_name,
                 store: user[0].store
@@ -56,9 +57,9 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
         event,
     }, 
     200,
-    {
+    /*{
         "Set-Cookie": `jid=${jwtCookie}; HttpOnly; path=/dev/refresh_token; sameSite=None; Secure`
-    })
+    }*/)
 }
 
 export const main = middyfy(login);
