@@ -1,4 +1,6 @@
 export const SET_SESSION = 'SET_SESSION'
+export const UPDATE_ACCESS_TOKEN = 'UPDATE_ACCESS_TOKEN'
+export const SET_EXP_TIME = 'SET_EXP_TIME'
 
 
 export interface SessionState {
@@ -16,4 +18,15 @@ interface SetSessionAction {
     authedUser: SessionState
 }
 
-export type SessionActionTypes = SetSessionAction
+interface UpdateAccessToken {
+    type: typeof UPDATE_ACCESS_TOKEN
+    accessToken: string
+    expiresAt: number
+}
+
+interface SetExpiresAt {
+    type: typeof SET_EXP_TIME
+    exp: number
+}
+
+export type SessionActionTypes = SetSessionAction | UpdateAccessToken | SetExpiresAt

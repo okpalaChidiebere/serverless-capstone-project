@@ -1,4 +1,5 @@
-import { SessionState, SET_SESSION, SessionActionTypes } from './types'
+import { SessionState, SET_SESSION, SessionActionTypes, 
+    SET_EXP_TIME, UPDATE_ACCESS_TOKEN } from './types'
 import { refreshToken } from '../../api/users-api'
 import { getExpiryTime } from "../../utils/jsonWebToken"
 import { Dispatch } from 'redux'
@@ -10,17 +11,30 @@ export const setAuthedUser = (newSession: SessionState): SessionActionTypes =>
     authedUser: newSession,
 })
 
+export const updateAccessToken = (accessToken: string, expiresAt: number): SessionActionTypes =>
+({
+    type: UPDATE_ACCESS_TOKEN,
+    accessToken,
+    expiresAt,
+})
+
+export const setExpiresAt = (exp: number): SessionActionTypes =>
+({
+    type: SET_EXP_TIME,
+    exp,
+})
+
 export const renewSession = () => async (dispatch: Dispatch) => {
 
     try {
         const { accessToken, user } = await refreshToken()
         let expiresAt = getExpiryTime(accessToken)
-        expiresAt = (expiresAt * 1000) + new Date().getTime()
+        expiresAt = expiresAt * 1000
         dispatch(setAuthedUser({
             accessToken,
             user,
-            isLoggedIn: new Date().getTime() < expiresAt,
-            expiresAt: expiresAt
+            isLoggedIn: Date.now() < expiresAt,
+            expiresAt
         }))
         //history.replace('/auth/login');
     }catch(e){

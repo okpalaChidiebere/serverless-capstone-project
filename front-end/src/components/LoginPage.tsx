@@ -34,12 +34,12 @@ const LoginPage: React.FC<Props> = (props) => {
             const { access_token, user, refresh_token } = response
             const exp = getExpiryTime(access_token)
 
-            let expiresAt = (exp * 1000) + new Date().getTime()
+            let expiresAt = exp * 1000
 
             setAuthedUser({
                 accessToken: access_token,
                 user,
-                isLoggedIn: new Date().getTime() < expiresAt,
+                isLoggedIn: Date.now() < expiresAt,
                 expiresAt
             })
 
@@ -74,8 +74,8 @@ const LoginPage: React.FC<Props> = (props) => {
 }
 
 //I really did not use this slice of store
-const mapStateToProps = ({  }: RootState) => ({
-    //authedUser
+const mapStateToProps = ({ authedUser }: RootState) => ({
+    authedUser
 })
   
 const mapDispatchToProps = {

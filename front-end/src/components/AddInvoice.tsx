@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import OrderItem, { orderItem  as item } from './OrderItem'
 import serializeForm from 'form-serialize'
+import { RootState } from '../reducers'
+import { connect, ConnectedProps } from 'react-redux'
+import { setExpiresAt } from '../actions/authedUser'
 
 /*const invoiceData = {
     orders: [
@@ -41,8 +44,10 @@ interface AddInvoiceState {
 
 }
 
+type PropsFromRedux = ConnectedProps<typeof connectedAddInvoice>
+type Props = PropsFromRedux
 
-const AddInvoice: React.FC = (props) => {
+const AddInvoice: React.FC<Props> = (props) => {
 
     const [ state, setState ] = useState<AddInvoiceState>({
         orders: [],
@@ -121,8 +126,9 @@ const AddInvoice: React.FC = (props) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
-        const formValues = serializeForm(e.currentTarget, { hash: true })
-        console.log(formValues)
+        /*const formValues = serializeForm(e.currentTarget, { hash: true })
+        console.log(formValues)*/
+        props.setExpiresAt(1615075094000)
     }
 
     const handleUpdateInvoiceSummary = (event: 
@@ -227,4 +233,13 @@ const AddInvoice: React.FC = (props) => {
     )
 }
 
-export default AddInvoice
+const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
+
+const mapDispatchToProps = {
+    setExpiresAt
+}
+  
+const connectedAddInvoice = connect(mapStateToProps, mapDispatchToProps)
+
+export default connectedAddInvoice(AddInvoice)
+//export default AddInvoice

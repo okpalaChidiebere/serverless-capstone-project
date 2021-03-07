@@ -1,10 +1,7 @@
-import { Middleware } from 'redux'
-import { RootState } from '../reducers'
+import { MiddleWare } from './middleware'
 
-const logger: Middleware<
-  {}, // legacy type parameter added to satisfy interface signature
-  RootState
-> = (store) => (next) => (action) => {
+
+const logger: MiddleWare = (store) => (next) => (action) => {
     console.group(action.type)
     console.log('The action: ', action)
     const returnValue = next(action) 
