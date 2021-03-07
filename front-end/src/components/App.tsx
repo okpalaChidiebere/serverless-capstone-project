@@ -8,12 +8,13 @@ import TransactionReports from './TransactionReports'
 import LoginPage from './LoginPage'
 import AddInvoice from './AddInvoice'
 import { renewSession } from '../actions/authedUser'
+import { handleInitialData } from '../actions/shared'
 
 
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
-function App({ authedUser, renewSession } : Props) {
+function App({ authedUser, renewSession, handleInitialData } : Props) {
   
   const isAuthenticated = authedUser.isLoggedIn
 
@@ -21,12 +22,19 @@ function App({ authedUser, renewSession } : Props) {
   useEffect(() => {
     (async () => {
       try{
-        renewSession()
+        if(isAuthenticated){
+          handleInitialData()
+        }else{
+          /*I had to put it inside if else, to avoid renewing the session twice
+          When isAuthnticated state changes, this useEffect renders again. more on that here
+          https://coder.earth/post/react-hooks-oops-part-2-effect-runs-multiple-times-with-the-same-dependencies/ */
+          renewSession()
+        }
       }catch(err){
         alert(err);
       }
     })()
-  }, [ renewSession ]);
+  }, [ renewSession, isAuthenticated, handleInitialData ]);
   //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
 
   return (
@@ -64,7 +72,8 @@ function App({ authedUser, renewSession } : Props) {
 const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
 
 const mapDispatchToProps = {
-  renewSession
+  renewSession,
+  handleInitialData,
 }
   
 const connectedApp = connect(mapStateToProps, mapDispatchToProps)

@@ -24,7 +24,7 @@ export function parseUserId(jwtToken: string): string {
     return decodedJwt.userId
 }
 
-export function createAccessToken(user: User, expiresIn: string = '40s'): string {
+export function createAccessToken(user: User, expiresIn: string = '20m'): string {
     return jwt.sign( user, 'tempSecret', { algorithm: 'HS256', expiresIn });
 }
 

@@ -5,7 +5,7 @@ export const SET_EXP_TIME = 'SET_EXP_TIME'
 
 export interface SessionState {
     isLoggedIn: boolean
-    accessToken: string | null
+    accessToken: string
     user: {
         full_name: string
         store: string

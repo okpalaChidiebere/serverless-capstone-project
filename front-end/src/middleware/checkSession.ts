@@ -9,7 +9,7 @@ const checkSession: MiddleWare = (store) => (next) => (action) => {
     const { authedUser } = store.getState()
 
     if(Date.now() >= authedUser.expiresAt 
-    && authedUser.accessToken !== null 
+    && authedUser.accessToken !== '' 
     && action.type !== UPDATE_ACCESS_TOKEN //to avoid infinite look off or updating the accessToken over and over
     ){
         
@@ -25,7 +25,7 @@ const checkSession: MiddleWare = (store) => (next) => (action) => {
         })
         .catch(() => {
             store.dispatch(setAuthedUser({
-                accessToken: null,
+                accessToken: '',
                 user: null,
                 isLoggedIn: false,
                 expiresAt: 0

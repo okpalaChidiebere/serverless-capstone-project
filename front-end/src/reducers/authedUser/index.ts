@@ -3,7 +3,7 @@ import { SessionState, SessionActionTypes, SET_SESSION,
 
 const initialState: SessionState = {
     isLoggedIn: false,
-    accessToken: null,
+    accessToken: '',
     user: null,
     expiresAt: 0
 }

@@ -41,7 +41,7 @@ export const renewSession = () => async (dispatch: Dispatch) => {
         console.warn('ERROR!', e)
         //alert("Error fetching data")
         dispatch(setAuthedUser({
-            accessToken: null,
+            accessToken: '',
             user: null,
             isLoggedIn: false,
             expiresAt: 0
