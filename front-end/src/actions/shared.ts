@@ -1,9 +1,11 @@
 import { Dispatch } from 'redux'
 import { getUsers } from '../api/users-api'
-import { getInvoices } from '../api/invoices-api'
+import { getInvoices, addInvoice } from '../api/invoices-api'
 import { receiveInvoices } from './invoices'
-import { receiveUsers } from './users'
+import { receiveUsers, updateUserSales } from './users'
 import { RootState } from '../reducers'
+import { addInvoice as addInvoiceActionCreator } from './invoices'
+import { Invoice } from '../types/Invoice'
 
 
 
@@ -22,5 +24,18 @@ export const handleInitialData = () => async (dispatch: Dispatch, getState: () =
     }catch(err){
         console.warn('ERROR!', err)
         alert("Error fetching initial data")
-    }//export type GetState = () => RootState;
+    }
+}
+
+export const handleAddInvoice = (newInvoice: Invoice) => async (dispatch: Dispatch, getState: () => RootState) => {
+    const { authedUser } = getState()
+
+    try{
+        await addInvoice(newInvoice, authedUser.accessToken)
+        dispatch(addInvoiceActionCreator(newInvoice))
+        dispatch(updateUserSales(authedUser.user?.full_name, newInvoice.id))
+    }catch(err){
+        console.warn('Error in handleAddInvoice: ', err)
+        alert('There was an error adding the invoice. Try again.')
+    }
 }

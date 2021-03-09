@@ -1,4 +1,5 @@
-import { InvoicesActionTypes,  RECEIVE_INVOICES } from "../../actions/invoices/types";
+import { InvoicesActionTypes,  RECEIVE_INVOICES, 
+  ADD_INVOICE } from "../../actions/invoices/types";
 import { Invoice } from "../../types/Invoice";
 
 
@@ -11,6 +12,8 @@ export default function invoices(
     switch(action.type) {
         case RECEIVE_INVOICES : 
           return action.invoices
+        case ADD_INVOICE : 
+          return state.concat([action.invoice])
         default:
             return state
     }

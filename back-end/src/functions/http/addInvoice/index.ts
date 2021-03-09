@@ -8,6 +8,7 @@ export default {
         http: {
           method: 'post',
           path: 'addInvoice',
+          cors: true,
           request: {
             schema: {
               'application/json': schema

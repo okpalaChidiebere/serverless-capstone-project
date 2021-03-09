@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import OrderItem, { orderItem  as item } from './OrderItem'
-import serializeForm from 'form-serialize'
+import OrderItem from './OrderItem' 
+//import serializeForm from 'form-serialize'
 import { RootState } from '../reducers'
 import { connect, ConnectedProps } from 'react-redux'
-import { setExpiresAt } from '../actions/authedUser'
+import { handleAddInvoice } from '../actions/shared'
+import { Invoice, order } from '../types/Invoice'
+import { generateInvoiceId } from '../utils/invoice'
 
 /*const invoiceData = {
     orders: [
@@ -33,23 +35,15 @@ import { setExpiresAt } from '../actions/authedUser'
     total: 10000,
     amountPaid: 10000,
 }*/
-interface AddInvoiceState {
-    orders: item[],
-    soldTo: string,
-    billTo: string,
-    paymentStatus: string,
-    paymentType: string,
-    total: number,
-    amountPaid: number,
-
-}
 
 type PropsFromRedux = ConnectedProps<typeof connectedAddInvoice>
 type Props = PropsFromRedux
 
 const AddInvoice: React.FC<Props> = (props) => {
 
-    const [ state, setState ] = useState<AddInvoiceState>({
+    const [ state, setState ] = useState<Invoice>({
+        id: generateInvoiceId(),
+        date: new Date().toISOString(),
         orders: [],
         soldTo: 'Cash Customer',
         billTo: 'Cash Customer',
@@ -57,16 +51,17 @@ const AddInvoice: React.FC<Props> = (props) => {
         paymentType: 'Cash',
         total: 0,
         amountPaid: 0,
+        salesPerson: props.authedUser.user?.full_name??''
     })
 
 
-    const handleOrderChange = (order: item) => (event : React.ChangeEvent<HTMLInputElement>
+    const handleOrderChange = (order: order) => (event : React.ChangeEvent<HTMLInputElement>
 		| React.ChangeEvent<HTMLSelectElement>) => {
 
-            const { name, value } = event.target
+            const { name, value, type } = event.target
             const newItem = {
                 ...order,
-                [name]: value
+                [name]: type === "number" ? +value : value
             }
         setState(currState => ({
             ...currState,
@@ -74,7 +69,7 @@ const AddInvoice: React.FC<Props> = (props) => {
         }))
     }
 
-    const handleUpdateAmount = (order: item) => (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleUpdateAmount = (order: order) => (event: React.KeyboardEvent<HTMLInputElement>) => {
 
 		const amount = (order.quantity * order.price)-(order.quantity * order.price * order.discount)/100
 
@@ -98,8 +93,7 @@ const AddInvoice: React.FC<Props> = (props) => {
         }))
 	}
 
-    const removeOrder = (order: item) => {
-        //const { orders } = state
+    const removeOrder = (order: order) => {
         setState(currState => ({
             ...currState,
             orders: currState.orders.filter((o, key) => key !== order.index),
@@ -126,19 +120,20 @@ const AddInvoice: React.FC<Props> = (props) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
-        /*const formValues = serializeForm(e.currentTarget, { hash: true })
-        console.log(formValues)*/
-        props.setExpiresAt(1615075094000)
+        //const formValues = serializeForm(e.currentTarget, { hash: true })
+        //console.log(formValues) // I really dont like the way the orders are arranged so i will use my state
+        //console.log(state)
+        props.handleAddInvoice(state)
     }
 
     const handleUpdateInvoiceSummary = (event: 
         React.ChangeEvent<HTMLInputElement>
 		| React.ChangeEvent<HTMLSelectElement>) => {
 
-        const { name, value } = event.target;
+        const { name, value, type } = event.target;
         setState(currState => ({
             ...currState,
-            [name]: value
+            [name]: type === "number" ? +value : value
         }))
     }
 
@@ -213,7 +208,7 @@ const AddInvoice: React.FC<Props> = (props) => {
                             <tr>
                                 <td>Amount Paid:</td>
                                 <td><input 
-                                type="text" 
+                                type="number" 
                                 className="form-control" 
                                 name="amountPaid" 
                                 value={amountPaid} 
@@ -236,10 +231,9 @@ const AddInvoice: React.FC<Props> = (props) => {
 const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
 
 const mapDispatchToProps = {
-    setExpiresAt
+    handleAddInvoice,
 }
   
 const connectedAddInvoice = connect(mapStateToProps, mapDispatchToProps)
 
 export default connectedAddInvoice(AddInvoice)
-//export default AddInvoice

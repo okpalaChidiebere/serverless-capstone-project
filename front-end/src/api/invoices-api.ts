@@ -15,3 +15,13 @@ export const getInvoices = async (idToken: string): Promise<Invoice[]> => {
     const { items } = response.data
     return items;
 }
+
+export const addInvoice = async (invoice: Invoice, idToken: string) => {
+  const response = await Axios.post(`${apiEndpoint}/addInvoice`,  JSON.stringify(invoice), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
+  });
+  return response.data;
+}

@@ -20,7 +20,7 @@ export default {
     },
     type: "object",
     title: "The Invoice Schema",
-    required: ['id', 'orders', 'soldTo', 'billTo', 'paymentStatus', 'paymentType', 'total', 'amountPaid', 'salesPerson'],
+    required: ['id', 'date', 'orders', 'soldTo', 'billTo', 'paymentStatus', 'paymentType', 'total', 'amountPaid', 'salesPerson'],
     properties: {
         orders: {
             type: "array",
@@ -33,6 +33,10 @@ export default {
         id: { 
             type: 'string', 
             pattern: "^[a-zA-Z0-9 ]+$", 
+        },
+        date: { 
+            type: 'string', 
+            //pattern: "^[a-zA-Z0-9 ]+$", 
         },
         soldTo: { 
             type: 'string',

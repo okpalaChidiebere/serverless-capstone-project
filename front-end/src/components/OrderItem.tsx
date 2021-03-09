@@ -1,22 +1,13 @@
 import React from 'react'
+import { order } from '../types/Invoice'
 
-export interface orderItem {
-	index?: number
-	productCode: number | string,
-	productType: string,
-	productColor: string,
-	quantity: number,
-	price: number,
-	discount: number,
-	amount: number,
-}
 
 interface OrderItemProps{
-	orderItem: orderItem,
-	removeOrder: (order: orderItem) => void,
-	orderChange: (order: orderItem) => (event : React.ChangeEvent<HTMLInputElement>
+	orderItem: order,
+	removeOrder: (order: order) => void,
+	orderChange: (order: order) => (event : React.ChangeEvent<HTMLInputElement>
 		| React.ChangeEvent<HTMLSelectElement>) => void,
-	updateAmount: (order: orderItem) => (event: React.KeyboardEvent<HTMLInputElement>) => void,
+	updateAmount: (order: order) => (event: React.KeyboardEvent<HTMLInputElement>) => void,
 }
 
 const OrderItem: React.FC<OrderItemProps> = ({ orderItem, removeOrder, orderChange, updateAmount }) => {
@@ -54,7 +45,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ orderItem, removeOrder, orderChan
             </td>
             <td>
 				<input 
-				type="text" 
+				type="number" 
 				className="form-control" 
 				name="quantity" 
 				value={orderItem.quantity === 0 ? '' : orderItem.quantity}
@@ -63,7 +54,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ orderItem, removeOrder, orderChan
 			</td>  
             <td>
 				<input 
-				type="text" 
+				type="number" 
 				className="form-control" 
 				name="price" 
 				onKeyUp={updateAmount(orderItem)}
@@ -72,7 +63,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ orderItem, removeOrder, orderChan
 			</td>  
             <td style={{width: "90px"}}>
 				<input 
-				type="text" 
+				type="number" 
 				className="form-control" 
 				name="discount" 
 				onKeyUp={updateAmount(orderItem)}
@@ -82,7 +73,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ orderItem, removeOrder, orderChan
 			</td>  
             <td>
 				<input 
-				type="text" 
+				type="number" 
 				className="form-control" 
 				name="amount" 
 				readOnly={true} 
