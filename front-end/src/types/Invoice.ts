@@ -1,6 +1,6 @@
 export interface Invoice {
     id: string,
-    date?: string,
+    date: string,
     orders: order[],
     soldTo: string,
     billTo: string,

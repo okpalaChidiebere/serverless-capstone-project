@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
+import { RootState } from '../reducers'
+import { connect, ConnectedProps } from 'react-redux'
 import { History } from 'history'
 
-interface TransactionReportsProps{
+/*interface TransactionReportsProps{
     history: History, 
-}
+}*/
 
-const TransactionReports: React.FC<TransactionReportsProps> = (props) => {
+type PropsFromRedux = ConnectedProps<typeof connectedTransactionReports>
+type TransactionReportsProps = PropsFromRedux
+
+const TransactionReports: React.FC<TransactionReportsProps> = ({ invoices, authedUser }) => {
 
     const [ state, setState ] = useState({
         listAllStoreOrders: true
@@ -19,6 +24,12 @@ const TransactionReports: React.FC<TransactionReportsProps> = (props) => {
 
 
     const { listAllStoreOrders } = state
+
+    const invoiceList = listAllStoreOrders
+    ? invoices
+    : invoices.filter (i => i.salesPerson === authedUser.user?.full_name)
+
+    
     return(
         <div>
             <div className="pageHeader"><h1> Search customer </h1></div>
@@ -54,15 +65,24 @@ const TransactionReports: React.FC<TransactionReportsProps> = (props) => {
                 <div>
 					<table className="add-invoice-table">
                         <tbody>
-                            <tr>
-                                <td>1120</td>
-                                <td>19-01-2021</td>
-                                <td style={{color:'#30b64f', width: '90px'}}>Paid & Supplied</td>
-                                <td>30000</td>
-                                <td>30000</td>
-                                <td>chidiebere</td>
-                                <td>Cash Customer</td>
-                            </tr>
+                            {
+                                invoiceList.length > 0
+                                ? (invoiceList.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()) //I could have sort this dates in an index table in my database
+                                .map(invoice => (
+                                    <tr>
+                                        <td>{invoice.id}</td>
+                                        <td>{invoice.date}</td>
+                                        <td style={{color:'#30b64f', width: '90px'}}>{invoice.paymentStatus}</td>
+                                        <td>{invoice.total}</td>
+                                        <td>{invoice.amountPaid}</td>
+                                        <td>{invoice.salesPerson}</td>
+                                        <td>{invoice.soldTo}</td>
+                                    </tr>
+                                )))
+                                : (<div>
+                                    No Invoice Recorded Yet
+                                </div>)
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -71,4 +91,9 @@ const TransactionReports: React.FC<TransactionReportsProps> = (props) => {
     )
 }
 
-export default TransactionReports
+const mapStateToProps = ({ invoices, authedUser }: RootState) => ({ invoices, authedUser })
+
+  
+const connectedTransactionReports = connect(mapStateToProps)
+
+export default connectedTransactionReports(TransactionReports)
