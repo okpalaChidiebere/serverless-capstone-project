@@ -14,7 +14,7 @@ export const getUsers = async (idToken: string): Promise<User[]> => {
         'Authorization': `Bearer ${idToken}`
       },
     });
-    console.log('Users:', response.data);
+    //console.log('Users:', response.data);
     const { items } = response.data
     return items;
 }
@@ -39,8 +39,6 @@ export const refreshToken = async () => {
         'Content-Type': 'application/json',
       },
     });
-    console.log('token:', response.data);
-    //const { accessToken } = response.data
-    //return accessToken;
+    //console.log('token:', response.data);
     return response.data;
 }

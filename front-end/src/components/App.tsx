@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from 'react'
+import React, { Suspense, lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { RootState } from '../reducers'
 import { connect, ConnectedProps } from 'react-redux'
@@ -17,12 +17,14 @@ import { addInvoice as addInvoiceActionCreator } from '../actions/invoices'
 
 
 const toast = new Toast()
+let lostConnectionToast: Toast | null = null
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
 function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCreator } : Props) {
   
   const isAuthenticated = authedUser.isLoggedIn
+  const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
@@ -31,6 +33,7 @@ function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCrea
         if(isAuthenticated){
           handleInitialData()
           openSocket(addInvoiceActionCreator)
+          setLoading(false)
         }else{
           /*I had to put it inside if else, to avoid renewing the session twice
           When isAuthnticated state changes, this useEffect renders again. more on that here
@@ -39,10 +42,15 @@ function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCrea
         }
       }catch(err){
         alert(err);
+        setLoading(false)
       }
     })()
   }, [ renewSession, isAuthenticated, handleInitialData, addInvoiceActionCreator ]);
   //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
+
+  if (loading) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className="site-container">
@@ -93,7 +101,10 @@ const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes) => {
   const ws = new WebSocket(socketUrl)
 
   ws.addEventListener('open', () => {
-    //toast.hide()
+    
+    if (lostConnectionToast) {
+      lostConnectionToast.hide()
+    }
   })
 
   ws.addEventListener('message', (event) => {
@@ -104,7 +115,8 @@ const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes) => {
 
   ws.addEventListener('close', () => {
     // tell the user
-    toast.show("Unable to connect. Retrying…")
+    lostConnectionToast = toast
+    lostConnectionToast.show("Unable to connect. Retrying…")
 
     // try and reconnect in 5 seconds
     setTimeout(() => {

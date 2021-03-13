@@ -26,25 +26,13 @@ export const setExpiresAt = (exp: number): SessionActionTypes =>
 
 export const renewSession = () => async (dispatch: Dispatch) => {
 
-    try {
-        const { accessToken, user } = await refreshToken()
-        let expiresAt = getExpiryTime(accessToken)
-        expiresAt = expiresAt * 1000
-        dispatch(setAuthedUser({
-            accessToken,
-            user,
-            isLoggedIn: Date.now() < expiresAt,
-            expiresAt
-        }))
-        //history.replace('/auth/login');
-    }catch(e){
-        console.warn('ERROR!', e)
-        //alert("Error fetching data")
-        dispatch(setAuthedUser({
-            accessToken: '',
-            user: null,
-            isLoggedIn: false,
-            expiresAt: 0
-        }))
-    }
+    const { accessToken, user } = await refreshToken()
+    let expiresAt = getExpiryTime(accessToken)
+    expiresAt = expiresAt * 1000
+    dispatch(setAuthedUser({
+        accessToken,
+        user,
+        isLoggedIn: Date.now() < expiresAt,
+        expiresAt
+    }))
 }
