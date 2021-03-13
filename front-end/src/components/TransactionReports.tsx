@@ -1,11 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useMemo, useLayoutEffect } from 'react'
 import { RootState } from '../reducers'
 import { connect, ConnectedProps } from 'react-redux'
-import { History } from 'history'
 
-/*interface TransactionReportsProps{
-    history: History, 
-}*/
 
 type PropsFromRedux = ConnectedProps<typeof connectedTransactionReports>
 type TransactionReportsProps = PropsFromRedux
@@ -15,6 +11,42 @@ const TransactionReports: React.FC<TransactionReportsProps> = ({ invoices, authe
     const [ state, setState ] = useState({
         listAllStoreOrders: true
     })
+
+    const [newInvoices, setNewInvoices] = useState(false)
+
+    const scroller = useRef<HTMLDivElement>(null)
+
+    //returns snapshot value
+    const scrollTo = useMemo(() => {
+        
+        // Find all elements in container which will be checked if are in view or not
+        const nodeElement = scroller.current?.querySelector('.invoice')
+        if (nodeElement) {
+            //capture the scroll position so we can adjust scroll latter
+            return nodeElement.scrollHeight - nodeElement.scrollTop
+        }
+
+        return undefined
+    }, [ invoices ])
+
+    //runs after component mounts
+    useLayoutEffect(() => {
+        if (scrollTo) {
+
+            scroller.current?.scrollBy({
+                top: scrollTo + 2, //add 2 for small margin error in scroll position
+                //behavior: "smooth",
+            });
+            setNewInvoices(true)
+        }
+    }, [ scrollTo, invoices ])
+
+    // called as the scroll position changes
+    const handleOnScroll = () => {
+        if (scroller.current!.scrollTop < 60) {
+            setNewInvoices(false)
+        }
+    }
 
     const storeOrders = () => {
         setState(curr => ({
@@ -62,14 +94,15 @@ const TransactionReports: React.FC<TransactionReportsProps> = ({ invoices, authe
                     </thead>
                     </table>
                 </div>
-                <div>
-					<table className="add-invoice-table">
+                <div style={{overflow: 'auto', flexDirection: 'column'}} ref={scroller} onScroll={handleOnScroll}>
+                    <div className={`invoices-alert ${newInvoices && listAllStoreOrders ? 'active' : ''}`} ><span>new invoices</span></div>
+					<table className="add-invoice-table" style={{margin: 0}}>
                         <tbody>
                             {
                                 invoiceList.length > 0
                                 ? (invoiceList.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()) //I could have sort this dates in an index table in my database
-                                .map(invoice => (
-                                    <tr>
+                                .map((invoice, index) => (
+                                    <tr key={index} className="invoice">
                                         <td>{invoice.id}</td>
                                         <td>{invoice.date}</td>
                                         <td style={{color:'#30b64f', width: '90px'}}>{invoice.paymentStatus}</td>

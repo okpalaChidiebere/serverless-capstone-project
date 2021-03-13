@@ -9,12 +9,18 @@ import LoginPage from './LoginPage'
 import AddInvoice from './AddInvoice'
 import { renewSession } from '../actions/authedUser'
 import { handleInitialData } from '../actions/shared'
+import { webSocketEndpoint } from '../config'
+import Toast from './Toast'
+import { Invoice } from '../types/Invoice'
+import { InvoicesActionTypes } from "../actions/invoices/types"
+import { addInvoice as addInvoiceActionCreator } from '../actions/invoices'
 
 
+const toast = new Toast()
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
-function App({ authedUser, renewSession, handleInitialData } : Props) {
+function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCreator } : Props) {
   
   const isAuthenticated = authedUser.isLoggedIn
 
@@ -24,6 +30,7 @@ function App({ authedUser, renewSession, handleInitialData } : Props) {
       try{
         if(isAuthenticated){
           handleInitialData()
+          openSocket(addInvoiceActionCreator)
         }else{
           /*I had to put it inside if else, to avoid renewing the session twice
           When isAuthnticated state changes, this useEffect renders again. more on that here
@@ -34,7 +41,7 @@ function App({ authedUser, renewSession, handleInitialData } : Props) {
         alert(err);
       }
     })()
-  }, [ renewSession, isAuthenticated, handleInitialData ]);
+  }, [ renewSession, isAuthenticated, handleInitialData, addInvoiceActionCreator ]);
   //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
 
   return (
@@ -74,8 +81,45 @@ const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
 const mapDispatchToProps = {
   renewSession,
   handleInitialData,
+  addInvoiceActionCreator,
 }
   
 const connectedApp = connect(mapStateToProps, mapDispatchToProps)
 
 export default connectedApp(App)
+
+const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes) => {
+  const socketUrl = webSocketEndpoint
+  const ws = new WebSocket(socketUrl)
+
+  ws.addEventListener('open', () => {
+    //toast.hide()
+  })
+
+  ws.addEventListener('message', (event) => {
+    //requestAnimationFrame(() => {
+      onSocketMessage(dispatch, event.data)
+    //})
+  })
+
+  ws.addEventListener('close', () => {
+    // tell the user
+    toast.show("Unable to connect. Retrying…")
+
+    // try and reconnect in 5 seconds
+    setTimeout(() => {
+      openSocket(dispatch)
+    }, 5000)
+  })
+}
+
+// called when the web socket sends message data
+const onSocketMessage = (dispatch: (invoice: Invoice) => InvoicesActionTypes, data: any) => {
+  const messages = JSON.parse(data) as Invoice
+
+  //console.log('WebSockets: ', messages)
+  //update the invoice store slice with the new invoice returned
+  if(messages.salesPerson !== 'Okpala Chidiebere')
+    dispatch(messages)
+
+}

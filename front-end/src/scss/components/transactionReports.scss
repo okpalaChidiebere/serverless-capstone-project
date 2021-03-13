@@ -40,3 +40,31 @@
 .tablink:hover {
     background-color: #777;
 }
+
+//More ideas on how to style this here
+//https://stackoverflow.com/questions/63698067/how-to-make-a-sticky-div-float-over-the-rest-of-the-page
+.invoices-alert {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  overflow-x:unset;
+  height: 0;
+  pointer-events: none;
+  will-change: opacity;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+
+  &.active {
+    opacity: 1;
+  }
+
+  span{
+    margin: 0 auto;
+    height: 40px;
+    width: 200vw;
+    text-align: center;
+    background: radial-gradient(ellipse farthest-side at 50% 0, rgba(saturate(#75c6ef, 30%), 0.47), rgba(saturate(#75c6ef, 30%), 0));
+  }
+}
+
+
