@@ -3,13 +3,14 @@ import { User } from '../models/User'
 import { getToken } from '../functions/auth/utils'
 
 
-export function verifyToken(authHeader: string){
+//used by requireAuth Lambda
+export function verifyToken(authHeader: string, accessSecretKey: string){
     
     const token = getToken(authHeader)
 
     return jwt.verify(
         token,
-        'tempSecret',
+        accessSecretKey,
         { algorithms: ['HS256'] }
     ) as User;
 }
@@ -24,11 +25,11 @@ export function parseUserId(jwtToken: string): string {
     return decodedJwt.userId
 }
 
-export function createAccessToken(user: User, expiresIn: string = '20m'): string {
-    return jwt.sign( user, 'tempSecret', { algorithm: 'HS256', expiresIn });
+export function createAccessToken(user: User, accessSecretKey: string, expiresIn: string = '20m'): string {
+    return jwt.sign( user, accessSecretKey, { algorithm: 'HS256', expiresIn });
 }
 
-export function createRefreshToken(user: User, expiresIn: string = '7d'): string {
+export function createRefreshToken(user: User, refreshSecretKey: string, expiresIn: string = '7d'): string {
     //The user will use this token only to get a new access token when the current accesstoken expires. 
-    return jwt.sign( user, 'tempSecretSeparateFromAccess', { algorithm: 'HS256', expiresIn });
+    return jwt.sign( user, refreshSecretKey, { algorithm: 'HS256', expiresIn });
 }

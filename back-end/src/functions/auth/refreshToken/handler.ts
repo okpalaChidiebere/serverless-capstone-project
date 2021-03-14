@@ -14,7 +14,11 @@ import schema from './schema';
 
 const logger = createLogger('refreshToken');
 
-const refreshToken: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const refreshTokenSecretField = process.env.JWT_AUTH_REFRESHTOKEN_SECRET_FIELD;
+const accessTokenSecretField = process.env.JWT_AUTH_ACESSTOKEN_SECRET_FIELD;
+
+
+const refreshToken: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event, context: any) => {
 
     const { refresh_token } = event.body;
 
@@ -29,7 +33,7 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (e
     //TODO: get sercret key from resource
     let decodedToken: any;
     try{
-        decodedToken = await verifyToken(refresh_token, 'tempSecretSeparateFromAccess');
+        decodedToken = await verifyToken(refresh_token, context.JWT_AUTH_SECRET[refreshTokenSecretField]);
     }catch(e){
         throw new createError.Unauthorized(`accessToken: ''`);
     }
@@ -52,7 +56,8 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (e
 
 
     //Generate Access Token
-    const jwt = createAccessToken({ userId: decodedToken.userId, tokenVersion: user.tokenVersion});
+    const jwt = createAccessToken({ userId: decodedToken.userId, tokenVersion: user.tokenVersion}, 
+        context.JWT_AUTH_SECRET[accessTokenSecretField]);
 
     return formatJSONResponse({
         auth: true, 
@@ -64,11 +69,11 @@ const refreshToken: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (e
     }, 200);
 }
 
-async function verifyToken(refreshToken: string, authSecret: string): Promise<User>{ //returns jwt token
+async function verifyToken(refreshToken: string, authRefreshTokenSecret: string): Promise<User>{ //returns jwt token
   
     return jwt.verify(
         refreshToken,
-        authSecret,
+        authRefreshTokenSecret,
         { algorithms: ['HS256'] }
     ) as User;
   }

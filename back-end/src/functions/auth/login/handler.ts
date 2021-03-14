@@ -11,8 +11,10 @@ import { comparePasswords } from '@libs/brcrypt';
 import { queryUserByEmail } from '../../../businessLogic/users';
 import schema from './schema';
 
-const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const refreshTokenSecretField = process.env.JWT_AUTH_REFRESHTOKEN_SECRET_FIELD;
+const accessTokenSecretField = process.env.JWT_AUTH_ACESSTOKEN_SECRET_FIELD;
 
+const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event, context: any) => {
     const { email, password } = event.body;
 
     if (!EmailValidator.validate(email)) {
@@ -36,13 +38,14 @@ const login: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) =
     }
 
     //Generate Access Token
-    const jwt = createAccessToken({ userId: user[0].userId});
+    const jwt = createAccessToken({ userId: user[0].userId}, context.JWT_AUTH_SECRET[accessTokenSecretField]);
 
     /*
     Generate Refresh token. 
     Create token so that we can keep the user logged in for like 7days.
     If the user does not login for 7 days we logged the user out. So they will have to login again*/
-    const jwtCookie = createRefreshToken({ userId: user[0].userId, tokenVersion: user[0].tokenVersion }); 
+    const jwtCookie = createRefreshToken({ userId: user[0].userId, tokenVersion: user[0].tokenVersion }, 
+        context.JWT_AUTH_SECRET[refreshTokenSecretField]); 
 
     return formatJSONResponse({
         body: {

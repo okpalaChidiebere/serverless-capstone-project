@@ -24,12 +24,12 @@ const LoginPage: React.FC<Props> = (props) => {
 
         e.preventDefault()
         const formValues = serializeForm(e.currentTarget, { hash: true })
-        console.log(formValues)
+        //console.log(formValues)
 
         const { email, password } = formValues
         try{
             const response = await loginUser({ email, password })
-            console.log(response)
+            //console.log(response)
 
             const { access_token, user, refresh_token } = response
             const exp = getExpiryTime(access_token)

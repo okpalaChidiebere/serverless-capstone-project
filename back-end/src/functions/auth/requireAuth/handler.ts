@@ -6,13 +6,16 @@ import type { ValidateEventAPIGatewayTokenAuthorizerEven } from '@libs/apiGatewa
 
 const logger = createLogger('requireAuth');
 
-const requireAuth: ValidateEventAPIGatewayTokenAuthorizerEven = async (event) => {
+const accessTokenSecretField = process.env.JWT_AUTH_ACESSTOKEN_SECRET_FIELD;
+
+const requireAuth: ValidateEventAPIGatewayTokenAuthorizerEven = async (event, context: any) => {
 
     logger.info('Authorizing a user', {authoriztionToken: event.authorizationToken});
 
     try {
 
-        const decodedToken = verifyToken(event.authorizationToken);
+        const decodedToken = verifyToken(event.authorizationToken, 
+          context.JWT_AUTH_SECRET[accessTokenSecretField]);
         logger.info('User was authorized: ', {
             event: event.authorizationToken,
         });

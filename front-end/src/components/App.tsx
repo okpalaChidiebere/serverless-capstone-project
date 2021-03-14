@@ -29,7 +29,7 @@ function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCrea
 
   useEffect(() => {
     (async () => {
-      try{
+      //try{
         if(isAuthenticated){
           handleInitialData()
           openSocket(addInvoiceActionCreator)
@@ -38,12 +38,14 @@ function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCrea
           /*I had to put it inside if else, to avoid renewing the session twice
           When isAuthnticated state changes, this useEffect renders again. more on that here
           https://coder.earth/post/react-hooks-oops-part-2-effect-runs-multiple-times-with-the-same-dependencies/ */
-          renewSession()
+          renewSession().catch(() => {
+            setLoading(false)
+          })
         }
-      }catch(err){
+/*      }catch(err){
         alert(err);
         setLoading(false)
-      }
+      }*/
     })()
   }, [ renewSession, isAuthenticated, handleInitialData, addInvoiceActionCreator ]);
   //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
