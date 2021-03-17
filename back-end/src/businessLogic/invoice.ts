@@ -31,3 +31,7 @@ export async function getAllInvoiceRecords(){
     return await invoiceAccess.getAllInvoiceRecords();
 }
 
+
+export async function syncInvoiceToES(body: any){
+    return await invoiceAccess.syncInvoiceToES(body);
+}

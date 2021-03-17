@@ -2,6 +2,8 @@ import * as AWS from 'aws-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import * as uuid from 'uuid';
 import { Invoice } from '../models/Invoice';
+import * as elasticsearch from 'elasticsearch';
+import * as httpAwsEs from 'http-aws-es';
 
 import { createLogger } from '@libs/logger';
 
@@ -10,6 +12,10 @@ const logger = createLogger('invoiceDataAccess');
 export class InvoiceAccess {
     constructor(
         private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+        private readonly esClient = new elasticsearch.Client({
+            hosts: [ process.env.ES_ENDPOINT ],
+            connectionClass: httpAwsEs,
+          }),
         private pid = uuid.v4(),
         private readonly invoiceTable = process.env.INVOICE_TABLE,
         private readonly usersTable = process.env.USERS_TABLE,
@@ -79,5 +85,18 @@ export class InvoiceAccess {
         });
         return result.Items as Invoice[];
     }
-    
+
+    async syncInvoiceToES(body: any): Promise<any>{
+        logger.info(`synching INSERT invoice to ES`, {
+            pid: this.pid,
+            invoiceId: body.id
+        });
+
+        await this.esClient.index({
+            index: 'invoices-index', //You will use this to create an index pattern in Kibana dashboard
+            type: 'invoices',
+            id: body.id,
+            body
+        })
+    }
 }

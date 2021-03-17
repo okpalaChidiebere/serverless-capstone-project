@@ -1,15 +1,7 @@
 import { DynamoDBStreamEvent, DynamoDBStreamHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import * as elasticsearch from 'elasticsearch';
-import * as httpAwsEs from 'http-aws-es';
 
-const esHost = process.env.ES_ENDPOINT;
-
-//create an instance of elastic search client to write to ES
-const es = new elasticsearch.Client({
-  hosts: [ esHost ],
-  connectionClass: httpAwsEs,
-});
+import { syncInvoiceToES } from '../../../businessLogic/invoice';
 
 
 const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent) => {
@@ -28,8 +20,6 @@ const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent) => {
 
         const newItem = record.dynamodb.NewImage;
 
-        const invoiceId = newItem.id.S;
-
         const body = {
             id: newItem.id.S,
             date: newItem.date.S,
@@ -43,12 +33,7 @@ const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent) => {
             salesPerson: newItem.salesPerson.S,
         };
 
-        await es.index({
-            index: 'invoices-index', //You will use this to create an index pattern in Kibana dashboard
-            type: 'invoices',
-            id: invoiceId,
-            body
-        })
+        await syncInvoiceToES(body)
     }
 }
 

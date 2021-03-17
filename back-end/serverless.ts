@@ -46,6 +46,9 @@ const serverlessConfiguration: AWS = {
       JWT_AUTH_SECRET_ID: "JwtAuthSecret-${self:provider.stage}",
       JWT_AUTH_ACESSTOKEN_SECRET_FIELD: "accessTokenSecret",
       JWT_AUTH_REFRESHTOKEN_SECRET_FIELD: "refreshTokenSecret",
+      ES_ENDPOINT: { //an evnironment variable that contains the name of the elastic search in this function and upload our dynamoDB items
+        "Fn::GetAtt" : [ "InvoicesSearch" , "DomainEndpoint" ],
+      }
     },
     iamRoleStatements: [
       { //read the secret value from this resource
