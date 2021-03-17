@@ -11,7 +11,7 @@ const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent) => {
 
         //we make an early return if the event of a record in a dynamodb is not insert
         if (record.eventName !== 'INSERT') {
-            return;
+            continue;
         }
 
         //At this point, its an insert record, so we can send notifications

@@ -10,12 +10,15 @@ import { addInvoice } from '../../../businessLogic/invoice';
 
 import schema from './schema';
 
-const addInvoiceHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const accessTokenSecretField = process.env.JWT_AUTH_ACESSTOKEN_SECRET_FIELD;
+
+const addInvoiceHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event, context: any) => {
     
     let result: any
     try{
         const { body, headers } = event;
-        const user = verifyToken(headers['Authorization']);
+        const user = verifyToken(headers['Authorization'], 
+        context.JWT_AUTH_SECRET[accessTokenSecretField]);
         result = await addInvoice({ ...body }, user.userId);
         return formatJSONResponse({
             message: 'SuccessFully created item',

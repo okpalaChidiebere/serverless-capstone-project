@@ -4,3 +4,4 @@ export { default as WebSocketConnectionsDynamoDBTable } from './dynaoDBTables/we
 export { default as KMSKey } from './kms/KMSKey';
 export { default as KMSKeyAlias } from './kms/KMSKeyAlias';
 export { default as JwtAuthSecret } from './secretsManager';
+export { default as InvoicesSearch } from './elasticSearch';

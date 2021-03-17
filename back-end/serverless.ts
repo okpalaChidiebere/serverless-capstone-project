@@ -4,11 +4,11 @@ import { hello } from './src/functions';
 import { requireAuth, login, refreshToken } from './src/functions/auth';
 import { createUser, addInvoice, GetUsers, GetInvoices } from './src/functions/http';
 import { ConnectHandler, DisconnectHandler } from './src/functions/websocket'; //functions that listen for websocekt connections to our app
-import { sendInvoiceNotifications } from './src/functions/dynamoDb';
+import { sendInvoiceNotifications, elasticSearchSync } from './src/functions/dynamoDb';
 
 import { UsersDynamoDBTable, InvoiceDynamoDBTable, 
   WebSocketConnectionsDynamoDBTable, KMSKey, KMSKeyAlias, 
-  JwtAuthSecret } from './src/resources';
+  JwtAuthSecret, InvoicesSearch } from './src/resources';
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -77,6 +77,7 @@ const serverlessConfiguration: AWS = {
     sendInvoiceNotifications,
     GetUsers,
     GetInvoices,
+    elasticSearchSync,
   },
   resources: {
     Resources: {
@@ -102,6 +103,7 @@ const serverlessConfiguration: AWS = {
       KMSKey, 
       KMSKeyAlias, 
       JwtAuthSecret,
+      InvoicesSearch,
     }
   }
 }
