@@ -35,3 +35,7 @@ export async function getAllInvoiceRecords(){
 export async function syncInvoiceToES(body: any){
     return await invoiceAccess.syncInvoiceToES(body);
 }
+
+export async function searchInvoice(query: string){
+    return await invoiceAccess.searchInvoice(query);
+}

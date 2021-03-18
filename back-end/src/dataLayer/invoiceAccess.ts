@@ -15,6 +15,8 @@ export class InvoiceAccess {
         private readonly esClient = new elasticsearch.Client({
             hosts: [ process.env.ES_ENDPOINT ],
             connectionClass: httpAwsEs,
+            log: "trace",
+            apiVersion: "7.4",
           }),
         private pid = uuid.v4(),
         private readonly invoiceTable = process.env.INVOICE_TABLE,
@@ -99,4 +101,29 @@ export class InvoiceAccess {
             body
         })
     }
+
+    async searchInvoice(query: string): Promise<any>{
+        return new Promise((resolve, reject) => {
+            this.esClient.search({
+                index: 'invoices-index',
+                type: 'invoices',
+                //size: 25, //default 10
+                body: {
+                    query: {
+                        multi_match: { 
+                            query,
+                            type: "phrase_prefix",
+                            fields: [ "id", "paymentStatus^2", "salesPerson^4", 
+                            "total", "amountPaid", "soldTo"]
+                        }
+                    }
+                }
+            }).then((resp) => {
+                return resolve(resp.hits.hits)
+            }).catch((err) => {
+                return reject(err.message)
+                //console.trace(err.message)
+            });
+        });
+    };
 }
