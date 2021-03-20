@@ -25,3 +25,14 @@ export const addInvoice = async (invoice: Invoice, idToken: string) => {
   });
   return response.data;
 }
+
+export const search = async (query: string, idToken: string) => {
+  const response = await Axios.get(`${apiEndpoint}/search-es-invoices`, {
+      headers: {
+        'Authorization': `Bearer ${idToken}`
+      },
+      params: { q: query }
+  });
+  const { items } = response.data
+  return items;
+}

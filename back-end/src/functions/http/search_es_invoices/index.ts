@@ -5,6 +5,7 @@ export default {
       http: {
         method: 'get',
         path: 'search-es-invoices',
+        cors: true,
         request: {
           parameters: {
             querystrings: {
