@@ -5,3 +5,5 @@ export { default as KMSKey } from './kms/KMSKey';
 export { default as KMSKeyAlias } from './kms/KMSKeyAlias';
 export { default as JwtAuthSecret } from './secretsManager';
 export { default as InvoicesSearch } from './elasticSearch';
+export { default as CognitoUserPool } from './amazonCognito/UserPool';
+export { default as CognitoUserPoolClient } from './amazonCognito/UserPoolClient';

@@ -8,7 +8,7 @@ import { sendInvoiceNotifications, elasticSearchSync } from './src/functions/dyn
 
 import { UsersDynamoDBTable, InvoiceDynamoDBTable, 
   WebSocketConnectionsDynamoDBTable, KMSKey, KMSKeyAlias, 
-  JwtAuthSecret, InvoicesSearch } from './src/resources';
+  JwtAuthSecret, InvoicesSearch, CognitoUserPool, CognitoUserPoolClient } from './src/resources';
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -108,6 +108,8 @@ const serverlessConfiguration: AWS = {
       KMSKeyAlias, 
       JwtAuthSecret,
       InvoicesSearch,
+      CognitoUserPool,
+      CognitoUserPoolClient,
     }
   }
 }
