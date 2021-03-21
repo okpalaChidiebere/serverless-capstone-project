@@ -1,12 +1,11 @@
 import React from 'react'
 import serializeForm from 'form-serialize'
-import { loginUser } from '../api/users-api'
 import { connect, ConnectedProps } from 'react-redux'
 import { setAuthedUser } from '../actions/authedUser'
 import { RootState } from '../reducers'
 //import { useHistory } from 'react-router-dom'
 import { setRrefreshToken } from "../utils/tokens"
-import { getExpiryTime } from "../utils/jsonWebToken"
+import { cognitoSignIn } from '../auth/Auth'
 
 
 type PropsFromRedux = ConnectedProps<typeof connector>
@@ -28,18 +27,24 @@ const LoginPage: React.FC<Props> = (props) => {
 
         const { email, password } = formValues
         try{
-            const response = await loginUser({ email, password })
-            //console.log(response)
+            const response = await cognitoSignIn( email, password )
+            const id_token = response.getIdToken().getJwtToken()
+            //const access_token = response.getAccessToken().getJwtToken()
+            const refresh_token = response.getRefreshToken().getToken()
+            const isLoggedIn = response.isValid()
+            const expiresAt = response.getAccessToken().getExpiration() * 1000
+            const full_name = response.getIdToken().decodePayload().name
 
-            const { access_token, user, refresh_token } = response
-            const exp = getExpiryTime(access_token)
-
-            let expiresAt = exp * 1000
+            console.log(full_name)
+            console.log(id_token)
 
             setAuthedUser({
-                accessToken: access_token,
-                user,
-                isLoggedIn: Date.now() < expiresAt,
+                accessToken: id_token,
+                user: {
+                    full_name,
+                    store: "Random default store name" //i will have to add this as a custom attribute for sign up using cognito
+                } ,
+                isLoggedIn,
                 expiresAt
             })
 
@@ -50,6 +55,7 @@ const LoginPage: React.FC<Props> = (props) => {
             //history.goBack()
         }catch(err){
             alert(err);
+            console.error("SignIn Error:", err)
         }
     }
 

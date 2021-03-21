@@ -1,39 +1,30 @@
-import { History } from 'history';
-import { loginUser } from '../api/users-api';
+import { AuthenticationDetails, CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js'
+import UserPool from './UserPool'
 
+export const cognitoSignIn = (email: any, password: any): Promise<CognitoUserSession> => {
+    return new Promise((resolve, reject) => {
 
-export default class Auth {
-
-    //accessToken: string = '';
-
-    /*constructor(history: History){
-        this.history = history
-
-    }*/
-    constructor(
-        private history: History,
-        private accessToken: string = '',
-    ){}
-
-    get getAccessToket (){
-        return this.accessToken;
-    }
-
-    set setAccessToken(token: string){
-        this.accessToken = token;
-    }
-
-    logout() {
-
-    }
-
-    async handleAuthentication(email: string, password: string) {
-        const response = await loginUser({ email, password })
-
-        if(response && response.data){
-            
+        const authenticationData = {
+            Username: email,
+            Password: password
         }
+        const authenticationDetails = new AuthenticationDetails( authenticationData )
 
-        this.history.replace('/');
-    }
+        const userData = {
+            Username: email,
+            Pool: UserPool
+        }
+        const cognitoUser = new CognitoUser( userData )
+        cognitoUser.authenticateUser(authenticationDetails, {
+            onSuccess: result => {
+                resolve(result)
+            },
+            onFailure: err => {
+                reject(err)
+            },
+            newPasswordRequired: data => {
+                reject(data)
+            }
+        })
+    })
 }
