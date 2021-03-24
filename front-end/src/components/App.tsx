@@ -7,60 +7,74 @@ import Home from './Home'
 import TransactionReports from './TransactionReports'
 import LoginPage from './LoginPage'
 import AddInvoice from './AddInvoice'
-import { renewSession } from '../actions/authedUser'
+import { renewSession, setAuthedUser } from '../actions/authedUser'
 import { handleInitialData } from '../actions/shared'
 import { webSocketEndpoint } from '../config'
 import Toast from './Toast'
 import { Invoice } from '../types/Invoice'
 import { InvoicesActionTypes } from "../actions/invoices/types"
 import { addInvoice as addInvoiceActionCreator } from '../actions/invoices'
+import { Amplify } from 'aws-amplify'
+import awsconfig from '../aws-exports'
+import { AmplifySignUp, AmplifyAuthenticator } from '@aws-amplify/ui-react'
+import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components'
+import { CognitoUserSession } from 'amazon-cognito-identity-js'
 
 
+Amplify.configure(awsconfig)
 const toast = new Toast()
 let lostConnectionToast: Toast | null = null
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
-function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCreator } : Props) {
+function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCreator, setAuthedUser } : Props) {
   
   const isAuthenticated = authedUser.isLoggedIn
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = React.useState<AuthState>()
 
 
   useEffect(() => {
-    (async () => {
-      //try{
-        if(isAuthenticated){
-          handleInitialData()
-          openSocket(addInvoiceActionCreator)
-          setLoading(false)
-        }else{
-          /*I had to put it inside if else, to avoid renewing the session twice
-          When isAuthnticated state changes, this useEffect renders again. more on that here
-          https://coder.earth/post/react-hooks-oops-part-2-effect-runs-multiple-times-with-the-same-dependencies/ */
-          renewSession().catch(() => {
-            setLoading(false)
-          })
-        }
-/*      }catch(err){
-        alert(err);
-        setLoading(false)
-      }*/
-    })()
-  }, [ renewSession, isAuthenticated, handleInitialData, addInvoiceActionCreator ]);
+    return onAuthUIStateChange(async (nextAuthState, authData) => {
+      setAuthState(nextAuthState)
+      console.log(authData)
+      if(authData){
+        const { attributes, signInUserSession } = authData as any
+        const response = signInUserSession as CognitoUserSession
+
+        const isLoggedIn = response.isValid()
+        const full_name = attributes.name
+        const id_token = response.getIdToken().getJwtToken()
+        const expiresAt = response.getIdToken().getExpiration() * 1000
+
+
+        setAuthedUser({
+          accessToken: id_token,
+          user: {
+              full_name,
+              store: "Random default store name" //i will have to add this as a custom attribute for sign up using cognito
+          } ,
+          isLoggedIn,
+          expiresAt
+        })
+        handleInitialData()
+        openSocket(addInvoiceActionCreator)
+      }
+          //setLoading(false)
+      
+    })
+  }, [ handleInitialData, addInvoiceActionCreator, setAuthedUser ])
   //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
 
-  if (loading) {
+  /*if (loading) {
     return <div>loading...</div>;
-  }
+  }*/
 
-  return (
+  return authState === AuthState.SignedIn && isAuthenticated ? (
     <div className="site-container">
       <Header />
       <div style={{flexGrow: 4}}>
-      {!isAuthenticated 
-        ? <LoginPage />
-        : (<Router >
+      <Router >
           <Suspense fallback={<p>Loading</p>}>
           <Switch>
               <Route 
@@ -79,16 +93,49 @@ function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCrea
               <Route component={lazy(() => import("./NotFoundPage"))} />
           </Switch>
           </Suspense>
-        </Router>)}
+        </Router>)
       </div>
       <footer> &#169;2016 God's Hand Aluminium Companies, Inc. All rights reserved</footer>
     </div>
+  ) : (
+    <AmplifyAuthenticator>
+      <AmplifySignUp
+        slot="sign-up"
+        formFields={[
+          {
+            type: "username",
+            label: "Username",
+            placeholder: "username",
+            required: true,
+          },
+          {
+            type: "email",
+            label: "Email",
+            placeholder: "email",
+            required: true,
+          },
+          {
+            type: "password",
+            label: "Password",
+            placeholder: "password",
+            required: true,
+          },
+          {
+            type: "name",
+            label: "Name",
+            placeholder: "Full name",
+            required: true,
+          },
+        ]}
+      />
+    </AmplifyAuthenticator>
   )
 }
 
 const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
 
 const mapDispatchToProps = {
+  setAuthedUser,
   renewSession,
   handleInitialData,
   addInvoiceActionCreator,
