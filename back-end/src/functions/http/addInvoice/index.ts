@@ -9,6 +9,21 @@ export default {
           method: 'post',
           path: 'addInvoice',
           cors: true,
+          integration: "lambda",
+          authorizer: {
+            type: "COGNITO_USER_POOLS", 
+            authorizerId: {
+              Ref: "GatewayAuthorizer"
+            },
+            //more claims you can expose
+            //https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+            //you access the clains in the lambda by events.cognitoPoolClaims
+            claims: [
+              "sub",
+              "name",
+              "email",
+            ]
+          },
           request: {
             schema: {
               'application/json': schema

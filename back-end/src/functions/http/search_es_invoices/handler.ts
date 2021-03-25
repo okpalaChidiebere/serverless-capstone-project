@@ -14,7 +14,8 @@ const search_es_invoices: ValidatedEventAPIGatewayProxyEvent<null> = async (even
 
     logger.info('Processing event: ', {event: event});
 
-    const query = event['queryStringParameters']?.q??"";
+    //we now get the user search value from 'query' instead of 'queryStringParameters' which is default due to the 'integration:lambda' settings we made as we customize the auth events 
+    const query = event['query']?.q??"";
     try{
         const results = await searchInvoice(query);
 

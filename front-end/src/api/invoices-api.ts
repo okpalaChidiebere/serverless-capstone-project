@@ -12,8 +12,8 @@ export const getInvoices = async (idToken: string): Promise<Invoice[]> => {
       },
     });
     //console.log('Invoices: ', response.data);
-    const { items } = response.data
-    return items;
+    const { body } = response.data
+    return JSON.parse(body).items;
 }
 
 export const addInvoice = async (invoice: Invoice, idToken: string) => {
@@ -33,6 +33,6 @@ export const search = async (query: string, idToken: string) => {
       },
       params: { q: query }
   });
-  const { items } = response.data
-  return items;
+  const { body } = response.data
+  return JSON.parse(body).items;
 }

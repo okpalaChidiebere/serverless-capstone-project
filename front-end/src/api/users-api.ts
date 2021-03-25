@@ -15,8 +15,8 @@ export const getUsers = async (idToken: string): Promise<User[]> => {
       },
     });
     //console.log('Users:', response.data);
-    const { items } = response.data
-    return items;
+    const { body } = response.data
+    return JSON.parse(body).items;
 }
 
 export const loginUser = async (credentials: LoginUserRequest) => {

@@ -101,6 +101,22 @@ const serverlessConfiguration: AWS = {
           
         }
       },
+      GatewayAuthorizer: {
+        Type: 'AWS::ApiGateway::Authorizer',
+        Properties: {
+          AuthorizerResultTtlInSeconds: 300,
+          IdentitySource: "method.request.header.Authorization",
+          Name: "Cognito",
+          RestApiId: { Ref: "ApiGatewayRestApi" },
+          Type: "COGNITO_USER_POOLS", 
+          ProviderARNs: [
+            {
+              "Fn::Sub": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${AWS::Region}_jJgz9wxDF",
+            },
+          ]
+          
+        }
+      },
       UsersDynamoDBTable,
       InvoiceDynamoDBTable,
       WebSocketConnectionsDynamoDBTable,
