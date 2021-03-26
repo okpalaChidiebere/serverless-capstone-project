@@ -19,8 +19,6 @@
     "axios": "^0.21.1",
     "closest": "^0.0.1",
     "form-serialize": "^0.7.2",
-    "js-cookie": "^2.2.1",
-    "jwt-decode": "^3.1.2",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -59,8 +57,6 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
-    "@types/js-cookie": "^2.2.6",
-    "@types/jwt-decode": "^3.1.0",
     "@types/react-redux": "^7.1.16"
   }
 }

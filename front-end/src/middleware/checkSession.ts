@@ -1,6 +1,5 @@
 import { MiddleWare } from './middleware'
-import { getExpiryTime } from "../utils/jsonWebToken"
-import { refreshToken } from '../api/users-api'
+import { Auth } from 'aws-amplify'
 import { setAuthedUser, updateAccessToken } from '../actions/authedUser'
 import { UPDATE_ACCESS_TOKEN } from '../actions/authedUser/types'
 
@@ -12,14 +11,14 @@ const checkSession: MiddleWare = (store) => (next) => (action) => {
     && authedUser.accessToken !== '' 
     && action.type !== UPDATE_ACCESS_TOKEN //to avoid infinite look off or updating the accessToken over and over
     ){
-        
-        refreshToken()
-        .then(({ accessToken }) => {
+        //more on this method here https://docs.amplify.aws/lib/auth/manageusers/q/platform/js#retrieve-current-session
+        //https://haverchuck.github.io/docs/js/authentication
+        Auth.currentSession()
+        .then((data) => {
 
-            let expiresAt = getExpiryTime(accessToken)
-            expiresAt = expiresAt * 1000
-
-            store.dispatch(updateAccessToken(accessToken, expiresAt))
+            const id_token = data.getIdToken().getJwtToken()
+            const expiresAt = data.getIdToken().getExpiration() * 1000
+            store.dispatch(updateAccessToken(id_token, expiresAt))
             //console.log('new token: ', accessToken)
             return next(action)
         })

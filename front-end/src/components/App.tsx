@@ -1,13 +1,12 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react'
+import React, { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { RootState } from '../reducers'
 import { connect, ConnectedProps } from 'react-redux'
 import Header from './Header'
 import Home from './Home'
 import TransactionReports from './TransactionReports'
-import LoginPage from './LoginPage'
 import AddInvoice from './AddInvoice'
-import { renewSession, setAuthedUser } from '../actions/authedUser'
+import { setAuthedUser } from '../actions/authedUser'
 import { handleInitialData } from '../actions/shared'
 import { webSocketEndpoint } from '../config'
 import Toast from './Toast'
@@ -27,7 +26,7 @@ let lostConnectionToast: Toast | null = null
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
-function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCreator, setAuthedUser } : Props) {
+function App({ authedUser, handleInitialData, addInvoiceActionCreator, setAuthedUser } : Props) {
   
   const isAuthenticated = authedUser.isLoggedIn
   //const [loading, setLoading] = useState(true);
@@ -37,7 +36,7 @@ function App({ authedUser, renewSession, handleInitialData, addInvoiceActionCrea
   useEffect(() => {
     return onAuthUIStateChange(async (nextAuthState, authData) => {
       setAuthState(nextAuthState)
-      console.log(authData)
+      //console.log(authData)
       if(authData){
         const { attributes, signInUserSession } = authData as any
         const response = signInUserSession as CognitoUserSession
@@ -136,7 +135,6 @@ const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
 
 const mapDispatchToProps = {
   setAuthedUser,
-  renewSession,
   handleInitialData,
   addInvoiceActionCreator,
 }
