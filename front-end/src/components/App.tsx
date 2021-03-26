@@ -1,6 +1,5 @@
-import React, { Suspense, lazy, useEffect } from 'react'
+import React, { Suspense, lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import { RootState } from '../reducers'
 import { connect, ConnectedProps } from 'react-redux'
 import Header from './Header'
 import Home from './Home'
@@ -13,39 +12,32 @@ import Toast from './Toast'
 import { Invoice } from '../types/Invoice'
 import { InvoicesActionTypes } from "../actions/invoices/types"
 import { addInvoice as addInvoiceActionCreator } from '../actions/invoices'
-import { Amplify } from 'aws-amplify'
-import awsconfig from '../aws-exports'
-import { AmplifySignUp, AmplifyAuthenticator } from '@aws-amplify/ui-react'
-import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components'
+import { Auth } from 'aws-amplify'
 import { CognitoUserSession } from 'amazon-cognito-identity-js'
 
 
-Amplify.configure(awsconfig)
+const loadUser = () => Auth.currentAuthenticatedUser({ bypassCache: true })
 const toast = new Toast()
 let lostConnectionToast: Toast | null = null
 type PropsFromRedux = ConnectedProps<typeof connectedApp>
 type Props = PropsFromRedux 
 
-function App({ authedUser, handleInitialData, addInvoiceActionCreator, setAuthedUser } : Props) {
+function App({ handleInitialData, addInvoiceActionCreator, setAuthedUser } : Props) {
   
-  const isAuthenticated = authedUser.isLoggedIn
-  //const [loading, setLoading] = useState(true);
-  const [authState, setAuthState] = React.useState<AuthState>()
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    return onAuthUIStateChange(async (nextAuthState, authData) => {
-      setAuthState(nextAuthState)
-      //console.log(authData)
-      if(authData){
-        const { attributes, signInUserSession } = authData as any
+    (async () => {
+      try{
+          
+        const { attributes, signInUserSession } = await loadUser()
+        //at this point there is no errors we catched. So user is logged in
         const response = signInUserSession as CognitoUserSession
 
         const isLoggedIn = response.isValid()
         const full_name = attributes.name
         const id_token = response.getIdToken().getJwtToken()
         const expiresAt = response.getIdToken().getExpiration() * 1000
-
 
         setAuthedUser({
           accessToken: id_token,
@@ -58,18 +50,20 @@ function App({ authedUser, handleInitialData, addInvoiceActionCreator, setAuthed
         })
         handleInitialData()
         openSocket(addInvoiceActionCreator)
+      }catch(err){
+        alert(err);
+      }finally{
+        setLoading(false)
       }
-          //setLoading(false)
-      
-    })
-  }, [ handleInitialData, addInvoiceActionCreator, setAuthedUser ])
+    })()
+  }, [ handleInitialData, addInvoiceActionCreator, setAuthedUser ]);
   //Why i passed renewSession callback here https://stackoverflow.com/questions/58624200/react-hook-useeffect-has-a-missing-dependency-dispatch
 
-  /*if (loading) {
+  if (loading) {
     return <div>loading...</div>;
-  }*/
+  }
 
-  return authState === AuthState.SignedIn && isAuthenticated ? (
+  return (
     <div className="site-container">
       <Header />
       <div style={{flexGrow: 4}}>
@@ -96,42 +90,8 @@ function App({ authedUser, handleInitialData, addInvoiceActionCreator, setAuthed
       </div>
       <footer> &#169;2016 God's Hand Aluminium Companies, Inc. All rights reserved</footer>
     </div>
-  ) : (
-    <AmplifyAuthenticator>
-      <AmplifySignUp
-        slot="sign-up"
-        formFields={[
-          {
-            type: "username",
-            label: "Username",
-            placeholder: "username",
-            required: true,
-          },
-          {
-            type: "email",
-            label: "Email",
-            placeholder: "email",
-            required: true,
-          },
-          {
-            type: "password",
-            label: "Password",
-            placeholder: "password",
-            required: true,
-          },
-          {
-            type: "name",
-            label: "Name",
-            placeholder: "Full name",
-            required: true,
-          },
-        ]}
-      />
-    </AmplifyAuthenticator>
   )
 }
-
-const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
 
 const mapDispatchToProps = {
   setAuthedUser,
@@ -139,7 +99,7 @@ const mapDispatchToProps = {
   addInvoiceActionCreator,
 }
   
-const connectedApp = connect(mapStateToProps, mapDispatchToProps)
+const connectedApp = connect(null, mapDispatchToProps)
 
 export default connectedApp(App)
 
