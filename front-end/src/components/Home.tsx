@@ -7,9 +7,6 @@ import { Auth } from 'aws-amplify'
 import { setAuthedUser } from '../actions/authedUser'
 
 
-/*interface HomeProps{
-  history: History, 
-}*/
 type PropsFromRedux = ConnectedProps<typeof connectedHome>
 type HomeProps = PropsFromRedux & RouteComponentProps
 

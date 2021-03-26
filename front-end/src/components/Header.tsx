@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import { RootState } from '../reducers'
+import { connect, ConnectedProps } from 'react-redux'
 
+type PropsFromRedux = ConnectedProps<typeof connectedHeader>
+type HeaderProps = PropsFromRedux
 
-function Header() {
+function Header({ authedUser }: HeaderProps) {
+
+  const { user } = authedUser
 
   const display_ct = () => {
 
@@ -26,11 +32,14 @@ function Header() {
     <header>
       <div className="time">{time}</div>
       <div className="logged-user" style={{}}>
-        <span style={{color: 'white'}}>store#1232 52 Oguta Road, Onitsha, Anambra.</span>
-        <span style={{color: '#0473b4'}}>Team Member: Okpala Collins</span>
+        <span style={{color: 'white'}}>{`store#${user?.store}`}</span>
+        <span style={{color: '#0473b4'}}>{`Team Member: ${user?.full_name}`}</span>
       </div>
     </header>
   )
 }
 
-export default Header
+const mapStateToProps = ({ authedUser }: RootState) => ({ authedUser })
+  
+const connectedHeader = connect(mapStateToProps)
+export default connectedHeader(Header)
