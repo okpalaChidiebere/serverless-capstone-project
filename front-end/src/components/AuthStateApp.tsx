@@ -1,6 +1,6 @@
 import React from 'react';
 import Amplify from 'aws-amplify';
-import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react';
+import { AmplifyAuthenticator, AmplifySignUp, AmplifySignIn } from '@aws-amplify/ui-react';
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import awsconfig from '../aws-exports';
 import App from '../components/App';
@@ -26,21 +26,9 @@ const AuthStateApp: React.FunctionComponent = () => {
         slot="sign-up"
         formFields={[
           {
-            type: "username",
-            label: "Username",
-            placeholder: "username",
-            required: true,
-          },
-          {
             type: "email",
             label: "Email",
-            placeholder: "email",
-            required: true,
-          },
-          {
-            type: "password",
-            label: "Password",
-            placeholder: "password",
+            placeholder: "name@host.com",
             required: true,
           },
           {
@@ -49,7 +37,36 @@ const AuthStateApp: React.FunctionComponent = () => {
             placeholder: "Full name",
             required: true,
           },
+          {
+            type: "username",
+            label: "Confirm Email",
+            placeholder: "name@host.com",
+            required: true,
+          },
+          {
+            type: "password",
+            label: "Password",
+            placeholder: "password",
+            required: true,
+          },
         ]}
+      />
+      <AmplifySignIn
+        slot="sign-in"
+        formFields={[
+          {
+            type: "username",
+            label: "Email",
+            placeholder: "name@host.com",
+            required: true,
+          },
+          {
+            type: "password",
+            label: "Password",
+            placeholder: "Password",
+            required: true,
+          },
+        ]} 
       />
     </AmplifyAuthenticator>
   );
