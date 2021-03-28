@@ -49,7 +49,7 @@ function App({ handleInitialData, addInvoiceActionCreator, setAuthedUser } : Pro
           expiresAt
         })
         handleInitialData()
-        openSocket(addInvoiceActionCreator)
+        openSocket(addInvoiceActionCreator, full_name)
       }catch(err){
         alert(err);
       }finally{
@@ -103,7 +103,7 @@ const connectedApp = connect(null, mapDispatchToProps)
 
 export default connectedApp(App)
 
-const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes) => {
+const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes, loginUser: string) => {
   const socketUrl = webSocketEndpoint
   const ws = new WebSocket(socketUrl)
 
@@ -116,7 +116,7 @@ const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes) => {
 
   ws.addEventListener('message', (event) => {
     //requestAnimationFrame(() => {
-      onSocketMessage(dispatch, event.data)
+      onSocketMessage(dispatch, event.data, loginUser)
     //})
   })
 
@@ -127,18 +127,18 @@ const openSocket = (dispatch: (invoice: Invoice) => InvoicesActionTypes) => {
 
     // try and reconnect in 5 seconds
     setTimeout(() => {
-      openSocket(dispatch)
+      openSocket(dispatch, loginUser)
     }, 5000)
   })
 }
 
 // called when the web socket sends message data
-const onSocketMessage = (dispatch: (invoice: Invoice) => InvoicesActionTypes, data: any) => {
+const onSocketMessage = (dispatch: (invoice: Invoice) => InvoicesActionTypes, data: any, loginUser: string) => {
   const messages = JSON.parse(data) as Invoice
 
   //console.log('WebSockets: ', messages)
   //update the invoice store slice with the new invoice returned
-  if(messages.salesPerson !== 'Okpala Chidiebere')
+  if(messages.salesPerson !== loginUser)
     dispatch(messages)
 
 }
