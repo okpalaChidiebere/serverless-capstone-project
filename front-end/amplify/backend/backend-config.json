@@ -1,10 +1,18 @@
 {
   "auth": {
-    "reactAmplifyCognitoSlsCapstone": {
+    "amplifyreactappfb4a4786": {
       "service": "Cognito",
+      "serviceType": "imported",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false
+    }
+  },
+  "function": {
+    "reactAmplifyCognitoSlsCapstonePostConfirmation": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   }
 }

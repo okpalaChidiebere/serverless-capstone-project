@@ -4,3 +4,5 @@ export { default as WebSocketConnectionsDynamoDBTable } from './dynaoDBTables/we
 export { default as InvoicesSearch } from './elasticSearch';
 export { default as CognitoUserPool } from './amazonCognito/UserPool';
 export { default as CognitoUserPoolClient } from './amazonCognito/UserPoolClient';
+export { default as CognitoUserPoolNativeClient } from './amazonCognito/UserPoolNativeClient';
+export { default as CognitoUserPoolGroupAdmin } from './amazonCognito/UserPoolGroupAdmin';

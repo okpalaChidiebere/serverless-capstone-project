@@ -3,9 +3,11 @@ import type { AWS } from '@serverless/typescript';
 import { addInvoice, GetUsers, GetInvoices, searchInvoicesES } from './src/functions/http';
 import { ConnectHandler, DisconnectHandler } from './src/functions/websocket'; //functions that listen for websocekt connections to our app
 import { sendInvoiceNotifications, elasticSearchSync } from './src/functions/dynamoDb';
+import { postConfirmation } from './src/functions/auth';
 
 import { UsersDynamoDBTable, InvoiceDynamoDBTable, 
-  WebSocketConnectionsDynamoDBTable, InvoicesSearch, CognitoUserPool, CognitoUserPoolClient } from './src/resources';
+  WebSocketConnectionsDynamoDBTable, InvoicesSearch, CognitoUserPool, CognitoUserPoolClient, 
+  CognitoUserPoolNativeClient, CognitoUserPoolGroupAdmin  } from './src/resources';
 
 const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
@@ -42,7 +44,8 @@ const serverlessConfiguration: AWS = {
     },
     lambdaHashingVersion: '20201221',
   },
-  functions: { 
+  functions: {
+    postConfirmation, 
     addInvoice,
     ConnectHandler, 
     DisconnectHandler,
@@ -80,7 +83,7 @@ const serverlessConfiguration: AWS = {
           Type: "COGNITO_USER_POOLS", 
           ProviderARNs: [
             {
-              "Fn::Sub": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${AWS::Region}_jJgz9wxDF",
+              "Fn::GetAtt" : [ "CognitoUserPool" , "Arn" ],
             },
           ]
           
@@ -92,6 +95,8 @@ const serverlessConfiguration: AWS = {
       InvoicesSearch,
       CognitoUserPool,
       CognitoUserPoolClient,
+      CognitoUserPoolNativeClient,
+      CognitoUserPoolGroupAdmin,
     }
   }
 }
