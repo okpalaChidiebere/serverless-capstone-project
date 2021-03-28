@@ -10,6 +10,13 @@ export default {
     }
   ],
   iamRoleStatements: [
+    {
+      Effect: "Allow",
+      Action: [
+          "dynamodb:PutItem",
+      ],
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+    },
     { //this might be the only one you really need
       Effect: "Allow",
       Action: [
