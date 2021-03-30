@@ -1,16 +1,17 @@
 import * as AWS from 'aws-sdk';
+import * as AWSXRay from 'aws-xray-sdk';
 import * as uuid from 'uuid';
 import { User } from '../models/User';
 
 import { createLogger } from '@libs/logger';
 
 const logger = createLogger('userDataAccess');
-
+const XAWS = AWSXRay.captureAWS(AWS);
 
 export class UserAccess {
 
     constructor(
-        private readonly docClient = new AWS.DynamoDB.DocumentClient(), 
+        private readonly docClient = new XAWS.DynamoDB.DocumentClient(), 
         private pid = uuid.v4(),
         private readonly usersTable = process.env.USERS_TABLE,
         private readonly userTableUserIDIndex = process.env.USERS_ID_INDEX,

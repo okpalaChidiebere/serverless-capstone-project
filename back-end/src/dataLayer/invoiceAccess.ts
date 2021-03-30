@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk';
+import * as AWSXRay from 'aws-xray-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import * as uuid from 'uuid';
 import { Invoice } from '../models/Invoice';
@@ -8,10 +9,11 @@ import * as httpAwsEs from 'http-aws-es';
 import { createLogger } from '@libs/logger';
 
 const logger = createLogger('invoiceDataAccess');
+const XAWS = AWSXRay.captureAWS(AWS);
 
 export class InvoiceAccess {
     constructor(
-        private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+        private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
         private readonly esClient = new elasticsearch.Client({
             hosts: [ process.env.ES_ENDPOINT ],
             connectionClass: httpAwsEs,

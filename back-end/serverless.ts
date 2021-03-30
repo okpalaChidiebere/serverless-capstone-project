@@ -13,6 +13,10 @@ const serverlessConfiguration: AWS = {
   service: 'serverless-invoice-app',
   frameworkVersion: '2',
   custom: {
+    'serverless-iam-roles-per-function': {
+      defaultInherit: true //without this the 'provider' level iam permissions will not work
+      //https://www.serverless.com/plugins/serverless-iam-roles-per-function
+    },
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true
@@ -41,6 +45,22 @@ const serverlessConfiguration: AWS = {
       ES_ENDPOINT: { //an evnironment variable that contains the name of the elastic search in this function and upload our dynamoDB items
         "Fn::GetAtt" : [ "InvoicesSearch" , "DomainEndpoint" ],
       }
+    },
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: [
+            "xray:PutTraceSegments",
+            "xray:PutTelemetryRecords",
+        ],
+        Resource: {
+          "Fn::Sub": "*"
+        }
+      },
+    ],
+    tracing: {
+      lambda: true, // enbable tracing for our lambda functions
+      apiGateway: true, // enable tracing for our API Gateway
     },
     lambdaHashingVersion: '20201221',
   },
