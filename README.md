@@ -2,6 +2,7 @@
 
 This project is a simple Invoice application using AWS Lambda and Serverless framework. 
 The application helps user keep track of aluminum goods items being sold.
+Search for "aluminum proflie" in google to see the picture of what this product looks like
 
 # Functionality of the application
 
