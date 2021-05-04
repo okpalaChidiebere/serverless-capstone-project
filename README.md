@@ -86,7 +86,7 @@ It receives a new TODO item to be created in JSON format that looks like this:
 
 * `disconnect` - removes the connectionId of the user that was saved when the user connects to our webocket.
 
-* `elasticSearchSync` - should delete a TODO item created by a current user. Expects an id of a TODO item to remove.
+* `elasticSearchSync` - should sync newly added invoce to ES database. We only handled INSERT operations from DynamoDBStreamEvent
 
 * `sendInvoiceNotifications` - Sends the newly inserted invoice data to the users connected in realtime. It gets all the connectionIds of the users online and sends data to the individually.
 
